@@ -1,0 +1,570 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RSAEM Robot - ROS2 Web Interface</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+
+        .hero {
+            text-align: center;
+            padding: 60px 20px;
+            color: white;
+        }
+
+        .hero img {
+            width: 120px;
+            height: 120px;
+            border-radius: 24px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            margin-bottom: 24px;
+        }
+
+        .hero h1 {
+            font-size: 2.5rem;
+            margin-bottom: 12px;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.2);
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+            max-width: 600px;
+            margin: 0 auto 30px;
+        }
+
+        .badges {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-bottom: 30px;
+        }
+
+        .badge {
+            background: rgba(255,255,255,0.2);
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            backdrop-filter: blur(10px);
+        }
+
+        .content {
+            background: white;
+            border-radius: 30px 30px 0 0;
+            padding: 50px 20px;
+            margin-top: 20px;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .section {
+            margin-bottom: 50px;
+        }
+
+        .section h2 {
+            font-size: 1.8rem;
+            margin-bottom: 20px;
+            color: #333;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+        }
+
+        .feature-card {
+            background: #f8f9fa;
+            border-radius: 16px;
+            padding: 24px;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+        }
+
+        .feature-card h3 {
+            font-size: 1.2rem;
+            margin-bottom: 10px;
+            color: #667eea;
+        }
+
+        .feature-card p {
+            color: #666;
+            line-height: 1.6;
+        }
+
+        .screenshots {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        .screenshot {
+            background: #f0f2f5;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+        }
+
+        .screenshot img {
+            width: 100%;
+            display: block;
+        }
+
+        .screenshot .caption {
+            padding: 16px;
+            text-align: center;
+            font-weight: 500;
+            color: #666;
+        }
+
+        .specs-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: #f8f9fa;
+            border-radius: 16px;
+            overflow: hidden;
+        }
+
+        .specs-table th,
+        .specs-table td {
+            padding: 16px 20px;
+            text-align: left;
+            border-bottom: 1px solid #e9ecef;
+        }
+
+        .specs-table th {
+            background: #667eea;
+            color: white;
+            font-weight: 500;
+        }
+
+        .specs-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .code-block {
+            background: #1e1e1e;
+            color: #d4d4d4;
+            padding: 20px;
+            border-radius: 12px;
+            font-family: 'Monaco', 'Menlo', monospace;
+            font-size: 0.9rem;
+            overflow-x: auto;
+            margin: 15px 0;
+        }
+
+        .code-block .comment {
+            color: #6a9955;
+        }
+
+        .code-block .cmd {
+            color: #dcdcaa;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 14px 28px;
+            background: #667eea;
+            color: white;
+            text-decoration: none;
+            border-radius: 12px;
+            font-weight: 500;
+            transition: background 0.3s, transform 0.3s;
+        }
+
+        .btn:hover {
+            background: #5a6fd6;
+            transform: translateY(-2px);
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 2px solid #667eea;
+            color: #667eea;
+        }
+
+        .btn-outline:hover {
+            background: #667eea;
+            color: white;
+        }
+
+        .buttons {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        footer {
+            text-align: center;
+            padding: 30px;
+            color: #999;
+            font-size: 0.9rem;
+        }
+
+        .ui-preview {
+            background: linear-gradient(135deg, #f5f7fa 0%, #e4e8ec 100%);
+            border-radius: 20px;
+            padding: 30px;
+            margin: 20px 0;
+        }
+
+        .ui-mockup {
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.15);
+            overflow: hidden;
+        }
+
+        .ui-header {
+            background: #fff;
+            padding: 12px 16px;
+            border-bottom: 1px solid #e5e7eb;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .ui-logo {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 600;
+            color: #1f2937;
+        }
+
+        .ui-logo img {
+            width: 32px;
+            height: 32px;
+            border-radius: 6px;
+        }
+
+        .ui-status {
+            display: flex;
+            gap: 8px;
+        }
+
+        .ui-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+        }
+
+        .ui-dot.green { background: #22c55e; }
+        .ui-dot.yellow { background: #eab308; }
+
+        .ui-tabs {
+            display: flex;
+            background: #f3f4f6;
+            padding: 8px;
+            gap: 4px;
+        }
+
+        .ui-tab {
+            padding: 10px 24px;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            color: #6b7280;
+        }
+
+        .ui-tab.active {
+            background: white;
+            color: #1f2937;
+            font-weight: 500;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+
+        .ui-content {
+            padding: 20px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            min-height: 300px;
+        }
+
+        .ui-lidar {
+            background: #1a1a2e;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .ui-lidar::before {
+            content: '';
+            position: absolute;
+            width: 150px;
+            height: 150px;
+            border: 2px solid rgba(59, 130, 246, 0.3);
+            border-radius: 50%;
+        }
+
+        .ui-lidar::after {
+            content: '';
+            position: absolute;
+            width: 100px;
+            height: 100px;
+            border: 2px solid rgba(59, 130, 246, 0.2);
+            border-radius: 50%;
+        }
+
+        .ui-robot {
+            width: 20px;
+            height: 30px;
+            background: #3b82f6;
+            border-radius: 4px;
+        }
+
+        .ui-joystick-area {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 20px;
+        }
+
+        .ui-joystick {
+            width: 120px;
+            height: 120px;
+            background: #f3f4f6;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .ui-joystick-inner {
+            width: 50px;
+            height: 50px;
+            background: #3b82f6;
+            border-radius: 50%;
+        }
+
+        .ui-stop-btn {
+            background: #ef4444;
+            color: white;
+            padding: 12px 40px;
+            border-radius: 8px;
+            font-weight: 600;
+        }
+
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 1.8rem;
+            }
+
+            .ui-content {
+                grid-template-columns: 1fr;
+            }
+
+            .buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="hero">
+        <img src="logo.png" alt="RSAEM Robot">
+        <h1>RSAEM Robot</h1>
+        <p>ROS2 Humble 기반 웹 인터페이스로 로봇을 제어하세요. SLAM, Navigation, 실시간 LiDAR 시각화를 브라우저에서 바로 사용할 수 있습니다.</p>
+
+        <div class="badges">
+            <span class="badge">ROS2 Humble</span>
+            <span class="badge">Jetson Orin Nano</span>
+            <span class="badge">2D LiDAR</span>
+            <span class="badge">SLAM</span>
+            <span class="badge">Navigation2</span>
+        </div>
+
+        <div class="buttons">
+            <a href="https://github.com/hwkim3330/jetson-12-15" class="btn">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/>
+                </svg>
+                GitHub
+            </a>
+        </div>
+    </div>
+
+    <div class="content">
+        <div class="container">
+            <!-- UI Preview -->
+            <div class="section">
+                <h2>Web Interface Preview</h2>
+                <div class="ui-preview">
+                    <div class="ui-mockup">
+                        <div class="ui-header">
+                            <div class="ui-logo">
+                                <img src="logo.png" alt="Logo">
+                                <span>RSAEM Robot</span>
+                            </div>
+                            <div class="ui-status">
+                                <div class="ui-dot green"></div>
+                                <div class="ui-dot green"></div>
+                            </div>
+                        </div>
+                        <div class="ui-tabs">
+                            <div class="ui-tab active">Control</div>
+                            <div class="ui-tab">SLAM</div>
+                            <div class="ui-tab">Navigate</div>
+                        </div>
+                        <div class="ui-content">
+                            <div class="ui-lidar">
+                                <div class="ui-robot"></div>
+                            </div>
+                            <div class="ui-joystick-area">
+                                <div class="ui-joystick">
+                                    <div class="ui-joystick-inner"></div>
+                                </div>
+                                <div class="ui-stop-btn">STOP</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Features -->
+            <div class="section">
+                <h2>Features</h2>
+                <div class="features">
+                    <div class="feature-card">
+                        <h3>Real-time LiDAR</h3>
+                        <p>실시간 2D LiDAR 데이터를 웹 브라우저에서 시각화합니다. 성능 최적화로 부드럽게 동작합니다.</p>
+                    </div>
+                    <div class="feature-card">
+                        <h3>Joystick Control</h3>
+                        <p>nipplejs 기반 터치 조이스틱으로 모바일/태블릿에서 직관적인 로봇 제어가 가능합니다.</p>
+                    </div>
+                    <div class="feature-card">
+                        <h3>SLAM Mapping</h3>
+                        <p>Cartographer SLAM으로 실시간 지도 생성. 웹에서 바로 맵핑 진행 상황을 확인합니다.</p>
+                    </div>
+                    <div class="feature-card">
+                        <h3>Navigation2</h3>
+                        <p>맵에서 드래그로 목적지와 방향을 직관적으로 설정하여 자율 주행을 시작합니다.</p>
+                    </div>
+                    <div class="feature-card">
+                        <h3>Camera View</h3>
+                        <p>160도 어안카메라 영상을 실시간으로 스트리밍합니다. 풀스크린 지원.</p>
+                    </div>
+                    <div class="feature-card">
+                        <h3>Offline Ready</h3>
+                        <p>모든 JS 라이브러리를 로컬에 저장하여 인터넷 없이도 동작합니다.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Specs -->
+            <div class="section">
+                <h2>Robot Specifications</h2>
+                <table class="specs-table">
+                    <tr>
+                        <th>Component</th>
+                        <th>Specification</th>
+                    </tr>
+                    <tr>
+                        <td>Computer</td>
+                        <td>NVIDIA Jetson Orin Nano</td>
+                    </tr>
+                    <tr>
+                        <td>ROS Version</td>
+                        <td>ROS2 Humble</td>
+                    </tr>
+                    <tr>
+                        <td>Jetpack</td>
+                        <td>6.2</td>
+                    </tr>
+                    <tr>
+                        <td>LiDAR</td>
+                        <td>2D LiDAR (12m range)</td>
+                    </tr>
+                    <tr>
+                        <td>Motors</td>
+                        <td>ROBOTIS Dynamixel</td>
+                    </tr>
+                    <tr>
+                        <td>Camera</td>
+                        <td>160-degree Fisheye</td>
+                    </tr>
+                    <tr>
+                        <td>Battery</td>
+                        <td>8.4V Li-ion</td>
+                    </tr>
+                </table>
+            </div>
+
+            <!-- Quick Start -->
+            <div class="section">
+                <h2>Quick Start</h2>
+                <div class="code-block">
+<span class="comment"># Build the workspace</span>
+<span class="cmd">cd ~/rsaembot_ws</span>
+<span class="cmd">colcon build</span>
+
+<span class="comment"># Launch robot + web interface</span>
+<span class="cmd">ros2 launch rssaem_web web_interface.launch.py</span>
+
+<span class="comment"># Access in browser</span>
+<span class="cmd">http://&lt;ROBOT_IP&gt;:8888</span>
+                </div>
+            </div>
+
+            <!-- Ports -->
+            <div class="section">
+                <h2>Network Ports</h2>
+                <table class="specs-table">
+                    <tr>
+                        <th>Port</th>
+                        <th>Service</th>
+                    </tr>
+                    <tr>
+                        <td>8888</td>
+                        <td>Web Interface</td>
+                    </tr>
+                    <tr>
+                        <td>9090</td>
+                        <td>ROSBridge WebSocket</td>
+                    </tr>
+                    <tr>
+                        <td>8080</td>
+                        <td>Video Streaming</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+
+        <footer>
+            <p>RSAEM Robot - Made by JetsonAI</p>
+        </footer>
+    </div>
+</body>
+</html>
