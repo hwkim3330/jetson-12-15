@@ -39,7 +39,7 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 12px 16px;
+            padding: 10px 16px;
             background: #fff;
             border-bottom: 1px solid #e5e7eb;
         }
@@ -47,24 +47,36 @@
         .logo {
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 8px;
         }
 
         .logo img {
-            height: 32px;
+            height: 28px;
         }
 
         .logo h1 {
-            font-size: 18px;
+            font-size: 16px;
             font-weight: 600;
             color: #1f2937;
+        }
+
+        .version {
+            font-size: 10px;
+            color: #9ca3af;
+            margin-left: 4px;
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 12px;
         }
 
         .status {
             display: flex;
             align-items: center;
-            gap: 6px;
-            font-size: 13px;
+            gap: 5px;
+            font-size: 12px;
             color: #6b7280;
         }
 
@@ -77,6 +89,38 @@
 
         .status-dot.ok { background: #22c55e; }
 
+        /* Toggle switches */
+        .toggles {
+            display: flex;
+            gap: 8px;
+        }
+
+        .toggle-btn {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            padding: 5px 10px;
+            border-radius: 6px;
+            font-size: 11px;
+            font-weight: 500;
+            border: 1px solid #e5e7eb;
+            background: #f9fafb;
+            color: #6b7280;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .toggle-btn.active {
+            background: #3b82f6;
+            border-color: #3b82f6;
+            color: #fff;
+        }
+
+        .toggle-btn svg {
+            width: 14px;
+            height: 14px;
+        }
+
         /* Tabs */
         .tabs {
             display: flex;
@@ -86,10 +130,10 @@
 
         .tab {
             flex: 1;
-            padding: 14px;
+            padding: 12px;
             background: none;
             border: none;
-            font-size: 14px;
+            font-size: 13px;
             font-weight: 500;
             color: #6b7280;
             cursor: pointer;
@@ -124,12 +168,12 @@
         /* View Panel */
         .view-panel {
             flex: 1;
-            margin: 12px;
+            margin: 10px;
             background: #1e293b;
-            border-radius: 16px;
+            border-radius: 14px;
             overflow: hidden;
             position: relative;
-            min-height: 200px;
+            min-height: 180px;
         }
 
         .view-panel canvas {
@@ -139,38 +183,53 @@
 
         .view-label {
             position: absolute;
-            top: 12px;
-            left: 12px;
-            background: rgba(0,0,0,0.6);
+            top: 10px;
+            left: 10px;
+            background: rgba(0,0,0,0.5);
             color: #fff;
-            padding: 6px 12px;
-            border-radius: 6px;
-            font-size: 12px;
+            padding: 4px 10px;
+            border-radius: 5px;
+            font-size: 11px;
             font-weight: 500;
         }
 
         .view-stats {
             position: absolute;
-            top: 12px;
-            right: 12px;
-            background: rgba(0,0,0,0.6);
+            top: 10px;
+            right: 10px;
+            background: rgba(0,0,0,0.5);
             color: #fff;
-            padding: 6px 12px;
-            border-radius: 6px;
-            font-size: 11px;
+            padding: 4px 10px;
+            border-radius: 5px;
+            font-size: 10px;
+        }
+
+        .view-placeholder {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: rgba(255,255,255,0.4);
+            font-size: 13px;
+            text-align: center;
         }
 
         /* Camera View */
         .camera-container {
             position: absolute;
-            bottom: 12px;
-            right: 12px;
-            width: 140px;
-            height: 105px;
+            bottom: 10px;
+            right: 10px;
+            width: 120px;
+            height: 90px;
             background: #000;
-            border-radius: 10px;
+            border-radius: 8px;
             overflow: hidden;
             border: 2px solid rgba(255,255,255,0.2);
+            display: none;
+        }
+
+        .camera-container.visible {
+            display: block;
         }
 
         .camera-container img {
@@ -196,7 +255,7 @@
         .control-panel {
             background: #fff;
             border-top: 1px solid #e5e7eb;
-            padding: 16px;
+            padding: 12px;
         }
 
         /* Joystick */
@@ -204,12 +263,12 @@
             display: flex;
             align-items: center;
             justify-content: space-around;
-            padding: 10px 0;
+            padding: 8px 0;
         }
 
         .joystick-zone {
-            width: 150px;
-            height: 150px;
+            width: 130px;
+            height: 130px;
             background: #f3f4f6;
             border-radius: 50%;
             position: relative;
@@ -220,40 +279,40 @@
         }
 
         .speed-value {
-            font-size: 32px;
+            font-size: 26px;
             font-weight: 300;
             color: #2563eb;
         }
 
         .speed-unit {
-            font-size: 12px;
+            font-size: 11px;
             color: #9ca3af;
         }
 
         /* Info Bar */
         .info-bar {
             display: flex;
-            gap: 8px;
-            margin-top: 12px;
+            gap: 6px;
+            margin-top: 10px;
         }
 
         .info-item {
             flex: 1;
             background: #f9fafb;
-            padding: 10px;
-            border-radius: 10px;
+            padding: 8px;
+            border-radius: 8px;
             text-align: center;
         }
 
         .info-item .label {
-            font-size: 10px;
+            font-size: 9px;
             color: #9ca3af;
             text-transform: uppercase;
             font-weight: 500;
         }
 
         .info-item .value {
-            font-size: 15px;
+            font-size: 13px;
             font-weight: 600;
             color: #374151;
             margin-top: 2px;
@@ -262,13 +321,13 @@
         /* Emergency */
         .emergency-btn {
             width: 100%;
-            margin-top: 12px;
-            padding: 16px;
+            margin-top: 10px;
+            padding: 14px;
             background: #ef4444;
             border: none;
-            border-radius: 12px;
+            border-radius: 10px;
             color: #fff;
-            font-size: 15px;
+            font-size: 14px;
             font-weight: 700;
             letter-spacing: 1px;
             cursor: pointer;
@@ -282,35 +341,35 @@
         .nav-hint {
             background: #dbeafe;
             border: 1px solid #93c5fd;
-            border-radius: 10px;
-            padding: 14px;
+            border-radius: 8px;
+            padding: 10px;
             text-align: center;
-            margin-bottom: 12px;
+            margin-bottom: 10px;
         }
 
         .nav-hint p {
-            font-size: 13px;
+            font-size: 12px;
             color: #1e40af;
         }
 
         .nav-hint .coords {
-            font-size: 16px;
+            font-size: 14px;
             font-weight: 600;
             color: #1d4ed8;
-            margin-top: 6px;
+            margin-top: 4px;
         }
 
         .nav-buttons {
             display: flex;
-            gap: 10px;
+            gap: 8px;
         }
 
         .nav-btn {
             flex: 1;
-            padding: 14px;
+            padding: 12px;
             border: none;
-            border-radius: 10px;
-            font-size: 14px;
+            border-radius: 8px;
+            font-size: 13px;
             font-weight: 600;
             cursor: pointer;
         }
@@ -334,82 +393,19 @@
             color: #fff;
         }
 
-        /* Goal Marker on Map */
-        .goal-marker {
-            position: absolute;
-            width: 24px;
-            height: 24px;
-            transform: translate(-50%, -50%);
-            pointer-events: none;
-        }
-
-        .goal-marker::before {
-            content: '';
-            position: absolute;
-            width: 24px;
-            height: 24px;
-            background: #ef4444;
-            border-radius: 50% 50% 50% 0;
-            transform: rotate(-45deg);
-        }
-
-        .goal-marker::after {
-            content: '';
-            position: absolute;
-            top: 4px;
-            left: 4px;
-            width: 16px;
-            height: 16px;
-            background: #fff;
-            border-radius: 50%;
-        }
-
-        /* Direction Arrow */
-        .direction-arrow {
-            position: absolute;
-            width: 60px;
-            height: 60px;
-            transform: translate(-50%, -50%);
-            pointer-events: none;
-        }
-
-        .direction-arrow svg {
-            width: 100%;
-            height: 100%;
-        }
-
-        /* Toast */
-        .toast {
-            position: fixed;
-            bottom: 100px;
-            left: 50%;
-            transform: translateX(-50%) translateY(100px);
-            background: #1f2937;
-            color: #fff;
-            padding: 12px 20px;
-            border-radius: 10px;
-            font-size: 14px;
-            z-index: 1000;
-            transition: transform 0.3s;
-        }
-
-        .toast.show {
-            transform: translateX(-50%) translateY(0);
-        }
-
         /* SLAM buttons */
         .slam-actions {
             display: flex;
-            gap: 10px;
-            margin-bottom: 12px;
+            gap: 8px;
+            margin-bottom: 10px;
         }
 
         .slam-btn {
             flex: 1;
-            padding: 12px;
+            padding: 10px;
             border: none;
-            border-radius: 10px;
-            font-size: 14px;
+            border-radius: 8px;
+            font-size: 13px;
             font-weight: 600;
             cursor: pointer;
         }
@@ -423,6 +419,25 @@
             background: #f3f4f6;
             color: #6b7280;
         }
+
+        /* Toast */
+        .toast {
+            position: fixed;
+            bottom: 100px;
+            left: 50%;
+            transform: translateX(-50%) translateY(100px);
+            background: #1f2937;
+            color: #fff;
+            padding: 10px 18px;
+            border-radius: 8px;
+            font-size: 13px;
+            z-index: 1000;
+            transition: transform 0.3s;
+        }
+
+        .toast.show {
+            transform: translateX(-50%) translateY(0);
+        }
     </style>
 </head>
 <body>
@@ -431,10 +446,31 @@
             <div class="logo">
                 <img src="logo.png" alt="">
                 <h1>RSAEM</h1>
+                <span class="version">v1.2</span>
             </div>
-            <div class="status">
-                <span class="status-dot" id="statusDot"></span>
-                <span id="statusText">Connecting</span>
+            <div class="header-right">
+                <div class="toggles">
+                    <button class="toggle-btn" id="toggleLidar" onclick="toggleLidar()">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="10"/>
+                            <circle cx="12" cy="12" r="3"/>
+                            <line x1="12" y1="2" x2="12" y2="5"/>
+                            <line x1="12" y1="19" x2="12" y2="22"/>
+                        </svg>
+                        LiDAR
+                    </button>
+                    <button class="toggle-btn" id="toggleCam" onclick="toggleCam()">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <rect x="2" y="5" width="20" height="14" rx="2"/>
+                            <circle cx="12" cy="12" r="3"/>
+                        </svg>
+                        CAM
+                    </button>
+                </div>
+                <div class="status">
+                    <span class="status-dot" id="statusDot"></span>
+                    <span id="statusText">...</span>
+                </div>
             </div>
         </header>
 
@@ -450,10 +486,9 @@
                 <div class="view-panel">
                     <canvas id="lidarCanvas"></canvas>
                     <div class="view-label">LiDAR</div>
-                    <div class="view-stats">
-                        <span id="pointCount">0</span> pts
-                    </div>
-                    <div class="camera-container" id="cameraContainer" onclick="toggleCamera()">
+                    <div class="view-stats"><span id="pointCount">-</span> pts</div>
+                    <div class="view-placeholder" id="lidarPlaceholder">LiDAR OFF<br>Tap button to enable</div>
+                    <div class="camera-container" id="cameraContainer" onclick="toggleCameraFullscreen()">
                         <img id="cameraImg" src="" alt="Camera">
                     </div>
                 </div>
@@ -500,6 +535,7 @@
                     <canvas id="slamCanvas"></canvas>
                     <div class="view-label">SLAM Mapping</div>
                     <div class="view-stats">Drive slowly</div>
+                    <div class="view-placeholder" id="slamPlaceholder">Enable LiDAR to map</div>
                 </div>
 
                 <div class="control-panel">
@@ -530,6 +566,7 @@
                     <canvas id="navCanvas"></canvas>
                     <div class="view-label">Navigation</div>
                     <div class="view-stats" id="navStats">Tap to set goal</div>
+                    <div class="view-placeholder" id="navPlaceholder">No map loaded</div>
                 </div>
 
                 <div class="control-panel">
@@ -557,18 +594,33 @@
         // Prevent scrolling
         document.addEventListener('touchmove', e => e.preventDefault(), { passive: false });
 
+        // Version
+        const VERSION = '1.2';
+
         // State
         let ros, cmdVelPub;
+        let lidarSub = null;
+        let odomSub = null;
+        let mapSub = null;
+        let globalPathSub = null;
+        let localPathSub = null;
         let robotPose = { x: 0, y: 0, theta: 0 };
         let mapData = null;
         let goalPose = null;
+        let globalPath = null;
+        let localPath = null;
         let currentPage = 'teleop';
-        let lidarData = null;
         let lastLidarDraw = 0;
+        let lastCmdTime = 0;
 
-        const MAX_LINEAR = 0.25;
-        const MAX_ANGULAR = 1.2;
-        const LIDAR_THROTTLE = 100; // ms
+        // Feature toggles
+        let lidarEnabled = false;
+        let cameraEnabled = false;
+
+        const MAX_LINEAR = 0.26;
+        const MAX_ANGULAR = 1.4;
+        const LIDAR_THROTTLE = 120;
+        const CMD_THROTTLE = 50; // Fast command rate
 
         // Canvas contexts
         const lidarCanvas = document.getElementById('lidarCanvas');
@@ -610,6 +662,60 @@
             setTimeout(() => el.classList.remove('show'), 2500);
         }
 
+        // Toggle LiDAR
+        function toggleLidar() {
+            lidarEnabled = !lidarEnabled;
+            const btn = document.getElementById('toggleLidar');
+            btn.classList.toggle('active', lidarEnabled);
+
+            if (lidarEnabled) {
+                subscribeLidar();
+                document.getElementById('lidarPlaceholder').style.display = 'none';
+                document.getElementById('slamPlaceholder').style.display = 'none';
+                toast('LiDAR enabled');
+            } else {
+                unsubscribeLidar();
+                document.getElementById('lidarPlaceholder').style.display = 'block';
+                document.getElementById('slamPlaceholder').style.display = 'block';
+                document.getElementById('pointCount').textContent = '-';
+                clearCanvas(lidarCanvas);
+                clearCanvas(slamCanvas);
+                toast('LiDAR disabled');
+            }
+        }
+
+        // Toggle Camera
+        function toggleCam() {
+            cameraEnabled = !cameraEnabled;
+            const btn = document.getElementById('toggleCam');
+            const cam = document.getElementById('cameraContainer');
+            const img = document.getElementById('cameraImg');
+
+            btn.classList.toggle('active', cameraEnabled);
+            cam.classList.toggle('visible', cameraEnabled);
+
+            if (cameraEnabled) {
+                const host = location.hostname || 'localhost';
+                img.src = `http://${host}:8080/stream?topic=/camera/image_raw&type=mjpeg&quality=40`;
+                toast('Camera enabled');
+            } else {
+                img.src = '';
+                toast('Camera disabled');
+            }
+        }
+
+        function toggleCameraFullscreen() {
+            if (cameraEnabled) {
+                document.getElementById('cameraContainer').classList.toggle('fullscreen');
+            }
+        }
+
+        function clearCanvas(canvas) {
+            const ctx = canvas.getContext('2d');
+            ctx.fillStyle = '#1e293b';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+        }
+
         // ROS Connection
         function connect() {
             const host = location.hostname || 'localhost';
@@ -617,15 +723,19 @@
 
             ros.on('connection', () => {
                 document.getElementById('statusDot').classList.add('ok');
-                document.getElementById('statusText').textContent = 'Connected';
+                document.getElementById('statusText').textContent = 'OK';
                 toast('Connected to robot');
                 setupTopics();
             });
 
             ros.on('close', () => {
                 document.getElementById('statusDot').classList.remove('ok');
-                document.getElementById('statusText').textContent = 'Disconnected';
+                document.getElementById('statusText').textContent = 'OFF';
                 setTimeout(connect, 3000);
+            });
+
+            ros.on('error', () => {
+                document.getElementById('statusText').textContent = 'ERR';
             });
         }
 
@@ -634,26 +744,56 @@
                 ros, name: '/cmd_vel', messageType: 'geometry_msgs/Twist'
             });
 
-            new ROSLIB.Topic({
-                ros, name: '/scan', messageType: 'sensor_msgs/LaserScan'
-            }).subscribe(onLidar);
-
-            new ROSLIB.Topic({
+            // Odom is lightweight, always subscribe
+            odomSub = new ROSLIB.Topic({
                 ros, name: '/odom', messageType: 'nav_msgs/Odometry'
-            }).subscribe(onOdom);
+            });
+            odomSub.subscribe(onOdom);
 
-            new ROSLIB.Topic({
+            // Map subscription
+            mapSub = new ROSLIB.Topic({
                 ros, name: '/map', messageType: 'nav_msgs/OccupancyGrid'
-            }).subscribe(onMap);
+            });
+            mapSub.subscribe(onMap);
 
-            // Setup camera
-            const host = location.hostname || 'localhost';
-            document.getElementById('cameraImg').src = `http://${host}:8080/stream?topic=/camera/image_raw&type=mjpeg&quality=50`;
+            // Global path (from planner)
+            globalPathSub = new ROSLIB.Topic({
+                ros, name: '/plan', messageType: 'nav_msgs/Path'
+            });
+            globalPathSub.subscribe(msg => {
+                globalPath = msg.poses;
+                if (currentPage === 'nav') drawMap();
+            });
+
+            // Local path (from controller)
+            localPathSub = new ROSLIB.Topic({
+                ros, name: '/local_plan', messageType: 'nav_msgs/Path'
+            });
+            localPathSub.subscribe(msg => {
+                localPath = msg.poses;
+                if (currentPage === 'nav') drawMap();
+            });
+        }
+
+        function subscribeLidar() {
+            if (lidarSub) return;
+            lidarSub = new ROSLIB.Topic({
+                ros, name: '/scan', messageType: 'sensor_msgs/LaserScan'
+            });
+            lidarSub.subscribe(onLidar);
+        }
+
+        function unsubscribeLidar() {
+            if (lidarSub) {
+                lidarSub.unsubscribe();
+                lidarSub = null;
+            }
         }
 
         // LiDAR drawing with throttle
         function onLidar(scan) {
-            lidarData = scan;
+            if (!lidarEnabled) return;
+
             const now = Date.now();
             if (now - lastLidarDraw < LIDAR_THROTTLE) return;
             lastLidarDraw = now;
@@ -677,10 +817,10 @@
                 ctx.stroke();
             }
 
-            // Points (sample every 3rd point for performance)
+            // Points (sample every 4th point for performance)
             let count = 0;
             ctx.fillStyle = '#4ade80';
-            for (let i = 0; i < scan.ranges.length; i += 3) {
+            for (let i = 0; i < scan.ranges.length; i += 4) {
                 const r = scan.ranges[i];
                 if (r > scan.range_min && r < scan.range_max) {
                     const a = scan.angle_min + i * scan.angle_increment;
@@ -705,7 +845,7 @@
             ctx.lineTo(cx, cy - 15);
             ctx.stroke();
 
-            document.getElementById('pointCount').textContent = count * 3;
+            document.getElementById('pointCount').textContent = count * 4;
         }
 
         // Odometry
@@ -726,6 +866,7 @@
         // Map
         function onMap(msg) {
             mapData = msg;
+            document.getElementById('navPlaceholder').style.display = 'none';
             if (currentPage === 'nav') drawMap();
         }
 
@@ -768,14 +909,79 @@
             ctx.drawImage(tmp, 0, 0);
             ctx.restore();
 
-            // Robot
+            // Store transform info for click handling
+            navCanvas._mapInfo = { offX, offY, scale, W, H, ox, oy, res };
+
+            // Draw Global Path (blue, dashed)
+            if (globalPath && globalPath.length > 1) {
+                ctx.strokeStyle = 'rgba(59, 130, 246, 0.6)';
+                ctx.lineWidth = 3;
+                ctx.setLineDash([8, 4]);
+                ctx.beginPath();
+                for (let i = 0; i < globalPath.length; i++) {
+                    const p = globalPath[i].pose.position;
+                    const px = offX + (p.x - ox) / res * scale;
+                    const py = offY + H * scale - (p.y - oy) / res * scale;
+                    if (i === 0) ctx.moveTo(px, py);
+                    else ctx.lineTo(px, py);
+                }
+                ctx.stroke();
+                ctx.setLineDash([]);
+            }
+
+            // Draw Local Path (cyan, solid, glowing - Tesla style)
+            if (localPath && localPath.length > 1) {
+                // Glow effect
+                ctx.strokeStyle = 'rgba(34, 211, 238, 0.3)';
+                ctx.lineWidth = 8;
+                ctx.beginPath();
+                for (let i = 0; i < localPath.length; i++) {
+                    const p = localPath[i].pose.position;
+                    const px = offX + (p.x - ox) / res * scale;
+                    const py = offY + H * scale - (p.y - oy) / res * scale;
+                    if (i === 0) ctx.moveTo(px, py);
+                    else ctx.lineTo(px, py);
+                }
+                ctx.stroke();
+
+                // Main line
+                ctx.strokeStyle = '#22d3ee';
+                ctx.lineWidth = 3;
+                ctx.beginPath();
+                for (let i = 0; i < localPath.length; i++) {
+                    const p = localPath[i].pose.position;
+                    const px = offX + (p.x - ox) / res * scale;
+                    const py = offY + H * scale - (p.y - oy) / res * scale;
+                    if (i === 0) ctx.moveTo(px, py);
+                    else ctx.lineTo(px, py);
+                }
+                ctx.stroke();
+            }
+
+            // Robot position
             const rx = offX + (robotPose.x - ox) / res * scale;
             const ry = offY + H * scale - (robotPose.y - oy) / res * scale;
 
+            // Robot glow
+            ctx.fillStyle = 'rgba(59, 130, 246, 0.3)';
+            ctx.beginPath();
+            ctx.arc(rx, ry, 14, 0, Math.PI * 2);
+            ctx.fill();
+
+            // Robot body
             ctx.fillStyle = '#3b82f6';
             ctx.beginPath();
             ctx.arc(rx, ry, 8, 0, Math.PI * 2);
             ctx.fill();
+
+            // Robot direction indicator
+            ctx.strokeStyle = '#fff';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.moveTo(rx, ry);
+            ctx.lineTo(rx + Math.cos(-robotPose.theta + Math.PI/2) * 14,
+                       ry + Math.sin(-robotPose.theta + Math.PI/2) * 14);
+            ctx.stroke();
 
             // Goal
             if (goalPose) {
@@ -803,7 +1009,6 @@
                                gy + Math.sin(-goalPose.theta + Math.PI/2) * 25);
                     ctx.stroke();
 
-                    // Arrow head
                     const ax = gx + Math.cos(-goalPose.theta + Math.PI/2) * 25;
                     const ay = gy + Math.sin(-goalPose.theta + Math.PI/2) * 25;
                     ctx.fillStyle = '#ef4444';
@@ -812,9 +1017,6 @@
                     ctx.fill();
                 }
             }
-
-            // Store transform info for click handling
-            navCanvas._mapInfo = { offX, offY, scale, W, H, ox, oy, res };
         }
 
         // Navigation canvas interaction
@@ -950,7 +1152,7 @@
                 mode: 'static',
                 position: { left: '50%', top: '50%' },
                 color: '#3b82f6',
-                size: 120
+                size: 110
             });
 
             joystick.on('move', (evt, data) => {
@@ -974,6 +1176,9 @@
 
         function sendVelocity(linear, angular) {
             if (!cmdVelPub) return;
+            const now = Date.now();
+            if (now - lastCmdTime < CMD_THROTTLE) return;
+            lastCmdTime = now;
             cmdVelPub.publish(new ROSLIB.Message({
                 linear: { x: linear, y: 0, z: 0 },
                 angular: { x: 0, y: 0, z: angular }
@@ -981,17 +1186,18 @@
         }
 
         function stopRobot() {
-            sendVelocity(0, 0);
+            // Bypass throttle for stop
+            if (cmdVelPub) {
+                cmdVelPub.publish(new ROSLIB.Message({
+                    linear: { x: 0, y: 0, z: 0 },
+                    angular: { x: 0, y: 0, z: 0 }
+                }));
+            }
         }
 
         function emergencyStop() {
-            for (let i = 0; i < 5; i++) stopRobot();
-            toast('EMERGENCY STOP');
-        }
-
-        // Camera toggle
-        function toggleCamera() {
-            document.getElementById('cameraContainer').classList.toggle('fullscreen');
+            for (let i = 0; i < 3; i++) stopRobot();
+            toast('STOP');
         }
 
         // Keyboard
@@ -1018,7 +1224,7 @@
         // Periodic map redraw
         setInterval(() => {
             if (currentPage === 'nav' && mapData) drawMap();
-        }, 500);
+        }, 300);
     </script>
 </body>
 </html>
