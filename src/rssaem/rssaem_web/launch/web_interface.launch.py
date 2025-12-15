@@ -49,27 +49,28 @@ def generate_launch_description():
             }.items(),
         ),
 
-        # ROSBridge WebSocket Server (proxied via nginx /rosbridge)
+        # ROSBridge WebSocket Server (direct access on port 9090)
         Node(
             package='rosbridge_server',
             executable='rosbridge_websocket',
             name='rosbridge_websocket',
             parameters=[{
                 'port': 9090,
-                'address': '127.0.0.1',  # Local only, nginx proxies
+                'address': '0.0.0.0',  # Allow external connections for stability
                 'retry_startup_delay': 5.0,
+                'send_action_goals_in_new_thread': True,
             }],
             output='screen'
         ),
 
-        # Web Video Server (proxied via nginx /stream)
+        # Web Video Server (direct access on port 8080)
         Node(
             package='web_video_server',
             executable='web_video_server',
             name='web_video_server',
             parameters=[{
                 'port': 8080,
-                'address': '127.0.0.1',  # Local only, nginx proxies
+                'address': '0.0.0.0',  # Allow external connections
                 'default_stream_type': 'mjpeg',
                 'quality': 50,
             }],

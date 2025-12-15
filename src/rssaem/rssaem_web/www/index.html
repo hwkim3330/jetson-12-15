@@ -8,6 +8,8 @@
     <script src="js/eventemitter2.min.js"></script>
     <script src="js/roslib.min.js"></script>
     <script src="js/nipplejs.min.js"></script>
+    <script src="js/easeljs.min.js"></script>
+    <script src="js/ros2d.min.js"></script>
     <style>
         * {
             margin: 0;
@@ -644,7 +646,8 @@
             <!-- SLAM Page -->
             <div class="page" id="page-slam">
                 <div class="view-panel">
-                    <canvas id="slamCanvas"></canvas>
+                    <div id="slamMap" style="width:100%;height:100%;"></div>
+                    <canvas id="slamCanvas" style="display:none;"></canvas>
                     <div class="view-label">SLAM Mapping</div>
                     <div class="view-stats">Drive slowly</div>
                     <div class="view-placeholder" id="slamPlaceholder">Enable LiDAR to map</div>
@@ -675,7 +678,8 @@
             <!-- Navigation Page -->
             <div class="page" id="page-nav">
                 <div class="view-panel" id="navViewPanel">
-                    <canvas id="navCanvas"></canvas>
+                    <div id="navMap" style="width:100%;height:100%;"></div>
+                    <canvas id="navCanvas" style="display:none;"></canvas>
                     <div class="view-label">Navigation</div>
                     <div class="view-stats" id="navStats">Tap to set goal</div>
                     <div class="view-placeholder" id="navPlaceholder">No map loaded</div>
@@ -858,7 +862,9 @@
             cam.classList.toggle('visible', cameraEnabled);
 
             if (cameraEnabled) {
-                img.src = `/stream?topic=/camera/image_raw&type=mjpeg&quality=40`;
+                const host = location.hostname || 'localhost';
+                // Direct connection to web_video_server on port 8080 for stability
+                img.src = `http://${host}:8080/stream?topic=/camera/image_raw&type=mjpeg&quality=40`;
                 toast('Camera enabled');
             } else {
                 img.src = '';
@@ -878,31 +884,63 @@
             ctx.fillRect(0, 0, canvas.width, canvas.height);
         }
 
-        // ROS Connection
+        // ROS Connection - Direct port 9090 for stability
+        let reconnectAttempts = 0;
+        let heartbeatInterval = null;
+        let isConnected = false;
+
         function connect() {
             const host = location.hostname || 'localhost';
-            // Use nginx proxy for WebSocket (port 80) or direct connection (port 9090)
-            const wsUrl = location.port === '' || location.port === '80'
-                ? `ws://${host}/rosbridge`
-                : `ws://${host}:9090`;
+            // Direct connection to rosbridge on port 9090 (more stable than nginx proxy)
+            const wsUrl = `ws://${host}:9090`;
+
+            if (ros) {
+                try { ros.close(); } catch(e) {}
+            }
+
             ros = new ROSLIB.Ros({ url: wsUrl });
 
             ros.on('connection', () => {
+                isConnected = true;
+                reconnectAttempts = 0;
                 document.getElementById('statusDot').classList.add('ok');
                 document.getElementById('statusText').textContent = 'OK';
                 toast('Connected to robot');
                 setupTopics();
+                startHeartbeat();
             });
 
             ros.on('close', () => {
+                isConnected = false;
+                stopHeartbeat();
                 document.getElementById('statusDot').classList.remove('ok');
                 document.getElementById('statusText').textContent = 'OFF';
-                setTimeout(connect, 3000);
+                reconnectAttempts++;
+                const delay = Math.min(1000 * reconnectAttempts, 5000);
+                setTimeout(connect, delay);
             });
 
-            ros.on('error', () => {
+            ros.on('error', (err) => {
                 document.getElementById('statusText').textContent = 'ERR';
+                console.error('ROS error:', err);
             });
+        }
+
+        function startHeartbeat() {
+            stopHeartbeat();
+            heartbeatInterval = setInterval(() => {
+                if (ros && isConnected) {
+                    // Send empty call to keep connection alive
+                    ros.getTopics(() => {}, () => {});
+                }
+            }, 10000);
+        }
+
+        function stopHeartbeat() {
+            if (heartbeatInterval) {
+                clearInterval(heartbeatInterval);
+                heartbeatInterval = null;
+            }
         }
 
         function setupTopics() {
@@ -942,6 +980,129 @@
 
             // Setup AI topics
             setupAITopics();
+
+            // Setup ros2djs viewers for SLAM and Navigation
+            setupRos2dViewers();
+        }
+
+        // ros2djs viewers
+        let slamViewer = null;
+        let navViewer = null;
+        let slamGridClient = null;
+        let navGridClient = null;
+        let robotMarker = null;
+        let goalMarker = null;
+
+        function setupRos2dViewers() {
+            // SLAM Viewer
+            const slamDiv = document.getElementById('slamMap');
+            if (slamDiv && typeof ROS2D !== 'undefined') {
+                const rect = slamDiv.parentElement.getBoundingClientRect();
+                slamViewer = new ROS2D.Viewer({
+                    divID: 'slamMap',
+                    width: rect.width || 400,
+                    height: rect.height || 300,
+                    background: '#1e293b'
+                });
+
+                // Subscribe to map for SLAM
+                slamGridClient = new ROS2D.OccupancyGridClient({
+                    ros: ros,
+                    rootObject: slamViewer.scene,
+                    continuous: true
+                });
+
+                // Add robot marker
+                const slamRobot = new ROS2D.NavigationArrow({
+                    size: 0.3,
+                    strokeSize: 0.05,
+                    fillColor: createjs.Graphics.getRGB(59, 130, 246),
+                    pulse: true
+                });
+                slamViewer.scene.addChild(slamRobot);
+
+                // Update robot position from TF
+                new ROSLIB.Topic({
+                    ros: ros,
+                    name: '/tf',
+                    messageType: 'tf2_msgs/TFMessage'
+                }).subscribe(msg => {
+                    msg.transforms.forEach(tf => {
+                        if (tf.child_frame_id === 'base_footprint' || tf.child_frame_id === 'base_link') {
+                            const pos = tf.transform.translation;
+                            const rot = tf.transform.rotation;
+                            const yaw = Math.atan2(2 * (rot.w * rot.z), 1 - 2 * rot.z * rot.z);
+                            slamRobot.x = pos.x;
+                            slamRobot.y = -pos.y;
+                            slamRobot.rotation = -yaw * 180 / Math.PI;
+                        }
+                    });
+                });
+
+                document.getElementById('slamPlaceholder').style.display = 'none';
+            }
+
+            // Navigation Viewer
+            const navDiv = document.getElementById('navMap');
+            if (navDiv && typeof ROS2D !== 'undefined') {
+                const rect = navDiv.parentElement.getBoundingClientRect();
+                navViewer = new ROS2D.Viewer({
+                    divID: 'navMap',
+                    width: rect.width || 400,
+                    height: rect.height || 300,
+                    background: '#1e293b'
+                });
+
+                // Subscribe to map for Navigation
+                navGridClient = new ROS2D.OccupancyGridClient({
+                    ros: ros,
+                    rootObject: navViewer.scene,
+                    continuous: true
+                });
+
+                // Add robot marker
+                robotMarker = new ROS2D.NavigationArrow({
+                    size: 0.3,
+                    strokeSize: 0.05,
+                    fillColor: createjs.Graphics.getRGB(59, 130, 246),
+                    pulse: true
+                });
+                navViewer.scene.addChild(robotMarker);
+
+                // Add goal marker (initially hidden)
+                goalMarker = new ROS2D.NavigationArrow({
+                    size: 0.4,
+                    strokeSize: 0.05,
+                    fillColor: createjs.Graphics.getRGB(239, 68, 68)
+                });
+                goalMarker.visible = false;
+                navViewer.scene.addChild(goalMarker);
+
+                // Enable pan/zoom
+                new ROS2D.PanView({
+                    rootObject: navViewer.scene
+                });
+                new ROS2D.ZoomView({
+                    rootObject: navViewer.scene,
+                    minScale: 0.1,
+                    maxScale: 10
+                });
+
+                // Click to set goal
+                navViewer.scene.addEventListener('stagemousedown', function(event) {
+                    const coords = navViewer.scene.globalToRos(event.stageX, event.stageY);
+                    goalPose = { x: coords.x, y: coords.y, theta: 0 };
+                    goalMarker.x = coords.x;
+                    goalMarker.y = -coords.y;
+                    goalMarker.visible = true;
+                    document.getElementById('goalCoords').textContent =
+                        `X: ${coords.x.toFixed(2)} Y: ${coords.y.toFixed(2)}`;
+                    document.getElementById('btnGo').disabled = false;
+                    toast('Goal set! Tap GO to navigate');
+                });
+
+                document.getElementById('navPlaceholder').style.display = 'none';
+            }
         }
 
         function subscribeLidar() {
@@ -1366,24 +1527,65 @@
             }
         }
 
+        // Smooth velocity control
+        let targetLinear = 0;
+        let targetAngular = 0;
+        let currentLinear = 0;
+        let currentAngular = 0;
+        const RAMP_RATE = 0.15; // Smooth acceleration
+        let velocityLoop = null;
+
         function sendVelocity(linear, angular) {
-            if (!cmdVelPub) return;
-            const now = Date.now();
-            if (now - lastCmdTime < CMD_THROTTLE) return;
-            lastCmdTime = now;
+            targetLinear = linear;
+            targetAngular = angular;
+
+            // Start velocity loop if not running
+            if (!velocityLoop) {
+                velocityLoop = setInterval(publishVelocity, 30); // 33Hz for smooth control
+            }
+        }
+
+        function publishVelocity() {
+            if (!cmdVelPub || !isConnected) return;
+
+            // Smooth ramping
+            currentLinear += (targetLinear - currentLinear) * RAMP_RATE;
+            currentAngular += (targetAngular - currentAngular) * RAMP_RATE;
+
+            // Dead zone
+            if (Math.abs(currentLinear) < 0.01) currentLinear = 0;
+            if (Math.abs(currentAngular) < 0.01) currentAngular = 0;
+
             cmdVelPub.publish(new ROSLIB.Message({
-                linear: { x: linear, y: 0, z: 0 },
-                angular: { x: 0, y: 0, z: angular }
+                linear: { x: currentLinear, y: 0, z: 0 },
+                angular: { x: 0, y: 0, z: currentAngular }
             }));
+
+            // Stop loop if both are zero
+            if (targetLinear === 0 && targetAngular === 0 &&
+                currentLinear === 0 && currentAngular === 0) {
+                clearInterval(velocityLoop);
+                velocityLoop = null;
+            }
         }
 
         function stopRobot() {
-            // Bypass throttle for stop
-            if (cmdVelPub) {
+            targetLinear = 0;
+            targetAngular = 0;
+            currentLinear = 0;
+            currentAngular = 0;
+
+            if (cmdVelPub && isConnected) {
+                // Send stop immediately
                 cmdVelPub.publish(new ROSLIB.Message({
                     linear: { x: 0, y: 0, z: 0 },
                     angular: { x: 0, y: 0, z: 0 }
                 }));
+            }
+
+            if (velocityLoop) {
+                clearInterval(velocityLoop);
+                velocityLoop = null;
             }
         }
 
