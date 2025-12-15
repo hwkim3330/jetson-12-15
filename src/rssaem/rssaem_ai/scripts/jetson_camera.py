@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Jetson Camera Node for RSAEM Robot
+Jetson Camera Node for RSSAEM Robot
 Uses GStreamer with hardware acceleration for optimal performance:
 - nvarguscamerasrc: CSI camera input
 - nvvidconv: Hardware color conversion (GPU accelerated)

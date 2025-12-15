@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-AI Model Setup Script for RSAEM Robot
+AI Model Setup Script for RSSAEM Robot
 Downloads and converts models for optimal Jetson performance:
 - YOLOv8n -> TensorRT (GPU/DLA)
 - MobileNet-SSD -> TensorRT
@@ -174,7 +174,7 @@ def setup_mediapipe():
 def create_model_info():
     """Create model info file"""
     info_path = os.path.join(MODELS_PATH, 'MODEL_INFO.md')
-    info_content = """# RSAEM Robot AI Models
+    info_content = """# RSSAEM Robot AI Models
 
 ## Available Models
 
@@ -235,7 +235,7 @@ To use DLA (Deep Learning Accelerator):
 
 def main():
     print("=" * 50)
-    print("RSAEM Robot AI Model Setup")
+    print("RSSAEM Robot AI Model Setup")
     print("=" * 50)
 
     os.makedirs(MODELS_PATH, exist_ok=True)

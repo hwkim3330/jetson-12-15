@@ -1,4 +1,4 @@
-# RSAEM Robot AI Capabilities Analysis
+# RSSAEM Robot AI Capabilities Analysis
 
 ## 1. Hardware Specifications
 

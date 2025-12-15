@@ -1,5 +1,5 @@
 #!/bin/bash
-# Enable WiFi AP Mode for RSAEM Robot
+# Enable WiFi AP Mode for RSSAEM Robot
 # Creates WiFi hotspot for offline operation
 
 set -e
@@ -25,7 +25,7 @@ echo ""
 echo "====================================="
 echo "  AP Mode Enabled!"
 echo "====================================="
-echo "  SSID: RSAEM_Robot"
+echo "  SSID: RSSAEM_Robot"
 echo "  Password: rsaem1234"
 echo "  IP: 192.168.4.1"
 echo ""

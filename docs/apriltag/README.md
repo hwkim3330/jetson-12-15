@@ -1,4 +1,4 @@
-# AprilTag for RSAEM Robot
+# AprilTag for RSSAEM Robot
 
 AprilTag is a visual fiduciary marker system useful for robot localization and navigation.
 

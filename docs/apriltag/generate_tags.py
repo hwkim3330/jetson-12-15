@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-AprilTag SVG Generator for RSAEM Robot
+AprilTag SVG Generator for RSSAEM Robot
 Generates printable AprilTag images in SVG format
 
 Usage:

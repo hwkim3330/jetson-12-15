@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-YOLOv8 TensorRT Detector Node for RSAEM Robot
+YOLOv8 TensorRT Detector Node for RSSAEM Robot
 Uses TensorRT engine for optimal Jetson performance
 Supports DLA (Deep Learning Accelerator) when available
 

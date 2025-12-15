@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-RSAEM Robot Web Interface Launch File
+RSSAEM Robot Web Interface Launch File
 
 Launches:
 - Robot bringup (motors, sensors, TF)

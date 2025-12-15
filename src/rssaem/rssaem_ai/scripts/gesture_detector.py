@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Gesture Detector Node for RSAEM Robot
+Gesture Detector Node for RSSAEM Robot
 Uses MediaPipe or OpenCV for hand gesture recognition
 Commands robot based on hand gestures:
 - Open palm: Stop

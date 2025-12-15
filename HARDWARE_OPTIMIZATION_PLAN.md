@@ -1,4 +1,4 @@
-# RSAEM Robot Hardware Optimization Plan
+# RSSAEM Robot Hardware Optimization Plan
 
 ## System Info
 - **Board**: Jetson Orin Nano (JetPack 6.2, R36)

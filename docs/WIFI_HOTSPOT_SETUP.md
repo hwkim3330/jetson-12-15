@@ -1,4 +1,4 @@
-# RSAEM Robot WiFi Hotspot Setup
+# RSSAEM Robot WiFi Hotspot Setup
 
 로봇이 인터넷 없이 독립적으로 작동할 수 있도록 WiFi 핫스팟 모드를 설정합니다.
 
@@ -56,7 +56,7 @@ sudo nano /etc/hostapd/hostapd.conf
 ```ini
 interface=wlan0
 driver=nl80211
-ssid=RSAEM_Robot
+ssid=RSSAEM_Robot
 hw_mode=g
 channel=7
 wmm_enabled=0
@@ -105,7 +105,7 @@ sudo reboot
 ## 접속 방법
 
 1. 스마트폰/노트북에서 WiFi 검색
-2. **RSAEM_Robot** 네트워크 연결
+2. **RSSAEM_Robot** 네트워크 연결
 3. 비밀번호: `rsaem1234`
 4. 브라우저에서 접속:
    - http://192.168.4.1/
@@ -122,7 +122,7 @@ sudo reboot
 sudo systemctl stop NetworkManager
 sudo systemctl start hostapd
 sudo systemctl start dnsmasq
-echo "AP Mode enabled: SSID=RSAEM_Robot"
+echo "AP Mode enabled: SSID=RSSAEM_Robot"
 echo "Connect to: http://192.168.4.1/"
 ```
 
@@ -191,10 +191,10 @@ sudo apt install avahi-daemon
 
 ```
 ┌─────────────────────────────────────────────────┐
-│                  RSAEM Robot                     │
+│                  RSSAEM Robot                    │
 │  ┌───────────────────────────────────────────┐  │
 │  │  wlan0 (AP Mode)                          │  │
-│  │  SSID: RSAEM_Robot                        │  │
+│  │  SSID: RSSAEM_Robot                       │  │
 │  │  IP: 192.168.4.1                          │  │
 │  └───────────────────────────────────────────┘  │
 │                      │                          │

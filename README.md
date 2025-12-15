@@ -1,4 +1,4 @@
-# RSAEM Robot - ROS2 Humble Workspace
+# RSSAEM Robot - ROS2 Humble Workspace
 
 알쌤로봇 오린 나노 ROS2 워크스페이스 (v1.5)
 
@@ -171,7 +171,7 @@ ros2 launch rssaem_navigation2 navigation2.launch.py map:=$HOME/map.yaml
 ```
 
 연결 정보:
-- SSID: `RSAEM_Robot`
+- SSID: `RSSAEM_Robot`
 - 비밀번호: `rsaem1234`
 - IP: `192.168.4.1`
 

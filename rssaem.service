@@ -1,5 +1,5 @@
 [Unit]
-Description=RSAEM Robot ROS2 Web Interface
+Description=RSSAEM Robot ROS2 Web Interface
 After=network.target
 
 [Service]

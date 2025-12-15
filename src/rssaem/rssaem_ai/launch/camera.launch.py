@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Camera Launch File for RSAEM Robot
+Camera Launch File for RSSAEM Robot
 Launches the Jetson camera node with configurable parameters
 """
 

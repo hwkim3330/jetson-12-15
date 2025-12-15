@@ -3,7 +3,7 @@
 <package format="3">
   <name>rssaem_web</name>
   <version>1.0.0</version>
-  <description>RSAEM Robot Web Interface - Tesla Style</description>
+  <description>RSSAEM Robot Web Interface - Tesla Style</description>
   <maintainer email="hwkim3330@users.noreply.github.com">hwkim3330</maintainer>
   <license>Apache-2.0</license>
 

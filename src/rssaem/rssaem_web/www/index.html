@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>RSAEM Robot</title>
+    <title>RSSAEM Robot</title>
     <!-- Offline-ready: Local JS libraries -->
     <script src="js/eventemitter2.min.js"></script>
     <script src="js/roslib.min.js"></script>
@@ -60,10 +60,39 @@
             color: #1f2937;
         }
 
-        .version {
+        .model-btns {
+            display: flex;
+            gap: 6px;
+        }
+
+        .model-btn {
+            padding: 5px 10px;
+            border-radius: 6px;
             font-size: 10px;
-            color: #9ca3af;
-            margin-left: 4px;
+            font-weight: 600;
+            border: 1px solid #e5e7eb;
+            background: #f9fafb;
+            color: #6b7280;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .model-btn.loading {
+            background: #fef3c7;
+            border-color: #fbbf24;
+            color: #92400e;
+        }
+
+        .model-btn.loaded {
+            background: #dcfce7;
+            border-color: #22c55e;
+            color: #166534;
+        }
+
+        .model-btn.error {
+            background: #fee2e2;
+            border-color: #ef4444;
+            color: #991b1b;
         }
 
         .header-right {
@@ -522,8 +551,13 @@
         <header class="header">
             <div class="logo">
                 <img src="logo.png" alt="">
-                <h1>RSAEM</h1>
-                <span class="version">v1.5</span>
+                <img src="keti.png" alt="" style="height: 24px; margin-left: 4px;">
+                <h1>RSSAEM</h1>
+            </div>
+            <div class="model-btns">
+                <button class="model-btn" id="btnLoadYolo" onclick="loadModel('yolo')">YOLO</button>
+                <button class="model-btn" id="btnLoadPerson" onclick="loadModel('person')">Person</button>
+                <button class="model-btn" id="btnLoadGesture" onclick="loadModel('gesture')">Gesture</button>
             </div>
             <div class="header-right">
                 <div class="toggles">
@@ -722,9 +756,6 @@
     <script>
         // Prevent scrolling
         document.addEventListener('touchmove', e => e.preventDefault(), { passive: false });
-
-        // Version
-        const VERSION = '1.5';
 
         // State
         let ros, cmdVelPub;
@@ -1499,6 +1530,53 @@
         setInterval(() => {
             if (currentPage === 'nav' && mapData) drawMap();
         }, 300);
+
+        // Model loading functions
+        const modelStatus = { yolo: 'idle', person: 'idle', gesture: 'idle' };
+
+        function loadModel(model) {
+            const btn = document.getElementById(`btnLoad${model.charAt(0).toUpperCase() + model.slice(1)}`);
+            if (!ros || !ros.isConnected) {
+                toast('Not connected to robot');
+                return;
+            }
+
+            if (modelStatus[model] === 'loaded') {
+                toast(`${model.toUpperCase()} already loaded`);
+                return;
+            }
+
+            // Set loading state
+            modelStatus[model] = 'loading';
+            btn.classList.remove('loaded', 'error');
+            btn.classList.add('loading');
+            toast(`Loading ${model.toUpperCase()} model...`);
+
+            // Call ROS service to load model
+            const loadService = new ROSLIB.Service({
+                ros,
+                name: `/load_${model}_model`,
+                serviceType: 'std_srvs/Trigger'
+            });
+
+            loadService.callService(new ROSLIB.ServiceRequest({}), result => {
+                btn.classList.remove('loading');
+                if (result.success) {
+                    modelStatus[model] = 'loaded';
+                    btn.classList.add('loaded');
+                    toast(`${model.toUpperCase()} model loaded!`);
+                } else {
+                    modelStatus[model] = 'error';
+                    btn.classList.add('error');
+                    toast(`Failed: ${result.message || 'Unknown error'}`);
+                }
+            }, error => {
+                btn.classList.remove('loading');
+                modelStatus[model] = 'error';
+                btn.classList.add('error');
+                toast(`Error loading ${model.toUpperCase()}`);
+            });
+        }
     </script>
 </body>
 </html>

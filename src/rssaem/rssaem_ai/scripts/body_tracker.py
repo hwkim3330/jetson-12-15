@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Body Tracker Node for RSAEM Robot
+Body Tracker Node for RSSAEM Robot
 Uses color-based tracking as lightweight alternative
 Can track person by their clothing color
 """

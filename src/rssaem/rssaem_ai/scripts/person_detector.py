@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Person Detector Node for RSAEM Robot
+Person Detector Node for RSSAEM Robot
 Uses OpenCV DNN with MobileNet-SSD for person detection
 Optimized for Jetson with hardware acceleration:
 - CUDA backend for GPU inference

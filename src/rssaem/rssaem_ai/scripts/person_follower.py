@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Person Follower Node for RSAEM Robot
+Person Follower Node for RSSAEM Robot
 Follows detected person using proportional control
 """
 

@@ -1,5 +1,5 @@
 #!/bin/bash
-# RSAEM Robot Auto-start Script
+# RSSAEM Robot Auto-start Script
 
 # Wait for system to be ready
 sleep 10
@@ -15,7 +15,7 @@ export ROS_DOMAIN_ID=30
 
 # Log file
 LOG_FILE=/home/nvidia/rsaembot_ws/autostart.log
-echo "$(date): Starting RSAEM Robot..." >> $LOG_FILE
+echo "$(date): Starting RSSAEM Robot..." >> $LOG_FILE
 
 # Launch the web interface (includes bringup)
 ros2 launch rssaem_web web_interface.launch.py >> $LOG_FILE 2>&1
