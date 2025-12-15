@@ -146,7 +146,64 @@ ros2 launch rssaem_navigation2 navigation2.launch.py map:=$HOME/map.yaml
 
 RViz2에서 `Nav2 Goal` 버튼으로 목표 지점 클릭
 
-## 8. 패키지 구조
+## 8. 웹 인터페이스 (Tesla Style)
+
+부팅 시 자동으로 웹 서버가 시작됩니다.
+
+### 8.1 접속 방법
+
+브라우저에서 다음 주소로 접속:
+```
+http://<로봇_IP>:8888
+```
+
+### 8.2 기능
+
+- **LiDAR 시각화**: 실시간 2D LiDAR 데이터 표시
+- **조이스틱 컨트롤**: 마우스/터치로 로봇 조종
+- **키보드 컨트롤**: W/A/S/D 또는 방향키
+- **SLAM 모드**: 지도 생성
+- **Navigation 모드**: 자율 주행
+- **비상 정지**: 즉시 정지 버튼
+
+### 8.3 수동 실행
+
+```bash
+# 기본 웹 인터페이스
+ros2 launch rssaem_web web_interface.launch.py
+
+# SLAM + 웹 인터페이스
+ros2 launch rssaem_web slam_web.launch.py
+
+# Navigation + 웹 인터페이스
+ros2 launch rssaem_web nav_web.launch.py map:=$HOME/map.yaml
+```
+
+### 8.4 포트 정보
+
+| 포트 | 서비스 |
+|------|--------|
+| 8888 | 웹 인터페이스 |
+| 9090 | ROSBridge WebSocket |
+| 8080 | 비디오 스트리밍 |
+
+### 8.5 자동 시작 서비스 관리
+
+```bash
+# 서비스 상태 확인
+sudo systemctl status rssaem
+
+# 서비스 중지
+sudo systemctl stop rssaem
+
+# 서비스 시작
+sudo systemctl start rssaem
+
+# 자동 시작 비활성화
+sudo systemctl disable rssaem
+```
+
+## 9. 패키지 구조
 
 ```
 rsaembot_ws/
@@ -161,9 +218,10 @@ rsaembot_ws/
         ├── rssaem_navigation2/   # 네비게이션
         ├── rssaem_node/          # 하드웨어 인터페이스
         ├── rssaem_teleop/        # 키보드 조종
+        ├── rssaem_web/           # 웹 인터페이스
         └── rf2o_laser_odometry/  # 레이저 오도메트리
 ```
 
-## 9. 문의
+## 10. 문의
 
 - 제조사: 주식회사 젯슨에이아이
