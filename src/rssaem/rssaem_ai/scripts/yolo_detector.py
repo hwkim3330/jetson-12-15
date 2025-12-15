@@ -97,8 +97,8 @@ class YoloDetector(Node):
         # Find model file
         model_paths = [
             self.model_path,
-            '/home/nvidia/rsaembot_ws/src/rssaem/rssaem_ai/models/tensorrt/yolov8n.engine',
-            '/home/nvidia/rsaembot_ws/src/rssaem/rssaem_ai/models/yolov8n.pt',
+            '/home/nvidia/rssaembot_ws/src/rssaem/rssaem_ai/models/tensorrt/yolov8n.engine',
+            '/home/nvidia/rssaembot_ws/src/rssaem/rssaem_ai/models/yolov8n.pt',
             'yolov8n.pt'  # Will download if not found
         ]
 

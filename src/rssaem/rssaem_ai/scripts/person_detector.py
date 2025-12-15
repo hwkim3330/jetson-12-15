@@ -84,7 +84,7 @@ class PersonDetector(Node):
 
         # Check common locations
         search_paths = [
-            '/home/nvidia/rsaembot_ws/src/rssaem/rssaem_ai/models',
+            '/home/nvidia/rssaembot_ws/src/rssaem/rssaem_ai/models',
             '/home/nvidia/models',
             '/opt/nvidia/models',
             model_dir

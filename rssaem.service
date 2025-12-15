@@ -5,8 +5,8 @@ After=network.target
 [Service]
 Type=simple
 User=nvidia
-WorkingDirectory=/home/nvidia/rsaembot_ws
-ExecStart=/home/nvidia/rsaembot_ws/rssaem_autostart.sh
+WorkingDirectory=/home/nvidia/rssaembot_ws
+ExecStart=/home/nvidia/rssaembot_ws/rssaem_autostart.sh
 Restart=on-failure
 RestartSec=10
 Environment="HOME=/home/nvidia"

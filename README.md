@@ -31,8 +31,8 @@
 
 ```bash
 # 1. 워크스페이스 클론
-git clone https://github.com/hwkim3330/jetson-12-15.git ~/rsaembot_ws
-cd ~/rsaembot_ws
+git clone https://github.com/hwkim3330/jetson-12-15.git ~/rssaembot_ws
+cd ~/rssaembot_ws
 
 # 2. 의존성 설치
 sudo apt update
@@ -43,7 +43,7 @@ source /opt/ros/humble/setup.bash
 colcon build --symlink-install
 
 # 4. 환경 설정
-echo "source ~/rsaembot_ws/install/setup.bash" >> ~/.bashrc
+echo "source ~/rssaembot_ws/install/setup.bash" >> ~/.bashrc
 echo "export LIDAR_MODEL=LDS-04" >> ~/.bashrc
 echo "export RSSAEM_MODEL=rssaem" >> ~/.bashrc
 source ~/.bashrc
@@ -180,7 +180,7 @@ ros2 launch rssaem_navigation2 navigation2.launch.py map:=$HOME/map.yaml
 ## 8. 패키지 구조
 
 ```
-rsaembot_ws/
+rssaembot_ws/
 ├── config/
 │   └── nginx/              # nginx 설정
 ├── docs/
@@ -246,7 +246,7 @@ ls /dev/ttyUSB*
 ## 11. 업데이트 방법
 
 ```bash
-cd ~/rsaembot_ws
+cd ~/rssaembot_ws
 git pull
 colcon build --symlink-install
 ./scripts/sync_www.sh

@@ -117,7 +117,7 @@ sudo reboot
 
 ```bash
 #!/bin/bash
-# /home/nvidia/rsaembot_ws/scripts/enable_ap_mode.sh
+# /home/nvidia/rssaembot_ws/scripts/enable_ap_mode.sh
 
 sudo systemctl stop NetworkManager
 sudo systemctl start hostapd
@@ -130,7 +130,7 @@ echo "Connect to: http://192.168.4.1/"
 
 ```bash
 #!/bin/bash
-# /home/nvidia/rsaembot_ws/scripts/enable_client_mode.sh
+# /home/nvidia/rssaembot_ws/scripts/enable_client_mode.sh
 
 sudo systemctl stop hostapd
 sudo systemctl stop dnsmasq
@@ -149,7 +149,7 @@ sudo nano /etc/rc.local
 #!/bin/bash
 # Start robot services
 source /opt/ros/humble/setup.bash
-source /home/nvidia/rsaembot_ws/install/setup.bash
+source /home/nvidia/rssaembot_ws/install/setup.bash
 export LIDAR_MODEL=LDS-04
 export RSSAEM_MODEL=rssaem
 
