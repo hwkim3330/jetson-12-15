@@ -2,29 +2,36 @@
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>RSAEM Robot Control</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>RSAEM Robot</title>
     <script src="https://cdn.jsdelivr.net/npm/eventemitter2@6.4.9/lib/eventemitter2.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/roslib@1.3.0/build/roslib.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/nipplejs@0.10.1/dist/nipplejs.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+            -webkit-touch-callout: none;
+            -webkit-user-select: none;
+            user-select: none;
         }
 
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 50%, #0a0a0a 100%);
-            color: #fff;
-            min-height: 100vh;
-            overflow-x: hidden;
+        html, body {
+            overflow: hidden;
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            font-family: 'Inter', -apple-system, sans-serif;
+            background: #f0f2f5;
         }
 
-        .container {
-            max-width: 1400px;
-            margin: 0 auto;
-            padding: 20px;
+        .app {
+            height: 100%;
+            display: flex;
+            flex-direction: column;
         }
 
         /* Header */
@@ -32,770 +39,986 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 20px 0;
-            border-bottom: 1px solid rgba(255,255,255,0.1);
+            padding: 12px 16px;
+            background: #fff;
+            border-bottom: 1px solid #e5e7eb;
         }
 
-        .logo-section {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-        }
-
-        .logo-section img {
-            height: 50px;
-            filter: brightness(1.2);
-        }
-
-        .logo-section h1 {
-            font-size: 28px;
-            font-weight: 300;
-            letter-spacing: 3px;
-        }
-
-        .status-badge {
+        .logo {
             display: flex;
             align-items: center;
             gap: 10px;
-            padding: 10px 20px;
-            background: rgba(255,255,255,0.05);
-            border-radius: 30px;
-            border: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .logo img {
+            height: 32px;
+        }
+
+        .logo h1 {
+            font-size: 18px;
+            font-weight: 600;
+            color: #1f2937;
+        }
+
+        .status {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 13px;
+            color: #6b7280;
         }
 
         .status-dot {
-            width: 12px;
-            height: 12px;
+            width: 8px;
+            height: 8px;
             border-radius: 50%;
-            background: #ff4444;
-            animation: pulse 2s infinite;
+            background: #ef4444;
         }
 
-        .status-dot.connected {
-            background: #00ff88;
+        .status-dot.ok { background: #22c55e; }
+
+        /* Tabs */
+        .tabs {
+            display: flex;
+            background: #fff;
+            border-bottom: 1px solid #e5e7eb;
         }
 
-        @keyframes pulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.5; }
-        }
-
-        /* Main Grid */
-        .main-grid {
-            display: grid;
-            grid-template-columns: 1fr 400px;
-            gap: 30px;
-            margin-top: 30px;
-        }
-
-        /* Visualization Panel */
-        .viz-panel {
-            background: rgba(255,255,255,0.03);
-            border-radius: 20px;
-            border: 1px solid rgba(255,255,255,0.1);
-            padding: 20px;
-            position: relative;
-            min-height: 500px;
-        }
-
-        .viz-panel h2 {
+        .tab {
+            flex: 1;
+            padding: 14px;
+            background: none;
+            border: none;
             font-size: 14px;
             font-weight: 500;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            color: rgba(255,255,255,0.6);
-            margin-bottom: 20px;
+            color: #6b7280;
+            cursor: pointer;
+            border-bottom: 2px solid transparent;
+            transition: all 0.2s;
         }
 
-        #lidar-canvas {
+        .tab.active {
+            color: #2563eb;
+            border-bottom-color: #2563eb;
+        }
+
+        /* Main */
+        .main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .page {
+            display: none;
+            flex: 1;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .page.active {
+            display: flex;
+        }
+
+        /* View Panel */
+        .view-panel {
+            flex: 1;
+            margin: 12px;
+            background: #1e293b;
+            border-radius: 16px;
+            overflow: hidden;
+            position: relative;
+            min-height: 200px;
+        }
+
+        .view-panel canvas {
             width: 100%;
-            height: 450px;
-            background: radial-gradient(circle at center, #1a2a3a 0%, #0a0a0a 100%);
-            border-radius: 15px;
+            height: 100%;
+        }
+
+        .view-label {
+            position: absolute;
+            top: 12px;
+            left: 12px;
+            background: rgba(0,0,0,0.6);
+            color: #fff;
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        .view-stats {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            background: rgba(0,0,0,0.6);
+            color: #fff;
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 11px;
+        }
+
+        /* Camera View */
+        .camera-container {
+            position: absolute;
+            bottom: 12px;
+            right: 12px;
+            width: 140px;
+            height: 105px;
+            background: #000;
+            border-radius: 10px;
+            overflow: hidden;
+            border: 2px solid rgba(255,255,255,0.2);
+        }
+
+        .camera-container img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .camera-container.fullscreen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 100;
+            border-radius: 0;
+            border: none;
         }
 
         /* Control Panel */
         .control-panel {
+            background: #fff;
+            border-top: 1px solid #e5e7eb;
+            padding: 16px;
+        }
+
+        /* Joystick */
+        .joystick-section {
             display: flex;
-            flex-direction: column;
-            gap: 20px;
-        }
-
-        .card {
-            background: rgba(255,255,255,0.03);
-            border-radius: 20px;
-            border: 1px solid rgba(255,255,255,0.1);
-            padding: 25px;
-            transition: all 0.3s ease;
-        }
-
-        .card:hover {
-            border-color: rgba(0,150,255,0.3);
-            box-shadow: 0 0 30px rgba(0,150,255,0.1);
-        }
-
-        .card h3 {
-            font-size: 12px;
-            font-weight: 500;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            color: rgba(255,255,255,0.5);
-            margin-bottom: 20px;
-        }
-
-        /* Joystick Area */
-        .joystick-container {
-            display: flex;
-            justify-content: center;
             align-items: center;
-            height: 200px;
-        }
-
-        .joystick {
-            width: 180px;
-            height: 180px;
-            background: linear-gradient(145deg, #1a1a2e, #0a0a15);
-            border-radius: 50%;
-            border: 2px solid rgba(0,150,255,0.3);
-            position: relative;
-            cursor: pointer;
-            box-shadow: 0 0 40px rgba(0,150,255,0.1), inset 0 0 30px rgba(0,0,0,0.5);
-        }
-
-        .joystick-knob {
-            width: 70px;
-            height: 70px;
-            background: linear-gradient(145deg, #3a3a5e, #2a2a4e);
-            border-radius: 50%;
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            border: 2px solid rgba(0,150,255,0.5);
-            box-shadow: 0 0 20px rgba(0,150,255,0.3);
-            transition: box-shadow 0.2s;
-        }
-
-        .joystick-knob:active {
-            box-shadow: 0 0 30px rgba(0,150,255,0.6);
-        }
-
-        .joystick-arrows {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            pointer-events: none;
-        }
-
-        .arrow {
-            position: absolute;
-            font-size: 20px;
-            color: rgba(255,255,255,0.2);
-        }
-
-        .arrow.up { top: 15px; left: 50%; transform: translateX(-50%); }
-        .arrow.down { bottom: 15px; left: 50%; transform: translateX(-50%); }
-        .arrow.left { left: 15px; top: 50%; transform: translateY(-50%); }
-        .arrow.right { right: 15px; top: 50%; transform: translateY(-50%); }
-
-        /* Speed Display */
-        .speed-display {
-            display: flex;
             justify-content: space-around;
-            margin-top: 20px;
+            padding: 10px 0;
         }
 
-        .speed-item {
+        .joystick-zone {
+            width: 150px;
+            height: 150px;
+            background: #f3f4f6;
+            border-radius: 50%;
+            position: relative;
+        }
+
+        .speed-display {
             text-align: center;
         }
 
         .speed-value {
             font-size: 32px;
-            font-weight: 200;
-            color: #00ff88;
+            font-weight: 300;
+            color: #2563eb;
         }
 
-        .speed-label {
-            font-size: 11px;
-            color: rgba(255,255,255,0.4);
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            margin-top: 5px;
+        .speed-unit {
+            font-size: 12px;
+            color: #9ca3af;
         }
 
-        /* Mode Buttons */
-        .mode-buttons {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 15px;
-        }
-
-        .mode-btn {
-            padding: 20px;
-            background: linear-gradient(145deg, rgba(255,255,255,0.05), rgba(255,255,255,0.02));
-            border: 1px solid rgba(255,255,255,0.1);
-            border-radius: 15px;
-            color: #fff;
-            font-size: 14px;
-            font-weight: 500;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-
-        .mode-btn:hover {
-            background: linear-gradient(145deg, rgba(0,150,255,0.2), rgba(0,150,255,0.1));
-            border-color: rgba(0,150,255,0.5);
-            transform: translateY(-2px);
-        }
-
-        .mode-btn.active {
-            background: linear-gradient(145deg, rgba(0,150,255,0.3), rgba(0,150,255,0.1));
-            border-color: #0096ff;
-            box-shadow: 0 0 20px rgba(0,150,255,0.3);
-        }
-
-        .mode-btn.slam {
-            grid-column: span 2;
-            background: linear-gradient(145deg, rgba(255,100,0,0.2), rgba(255,100,0,0.1));
-            border-color: rgba(255,100,0,0.3);
-        }
-
-        .mode-btn.slam:hover {
-            background: linear-gradient(145deg, rgba(255,100,0,0.3), rgba(255,100,0,0.15));
-            border-color: rgba(255,100,0,0.6);
-        }
-
-        .mode-btn.nav {
-            grid-column: span 2;
-            background: linear-gradient(145deg, rgba(0,255,136,0.2), rgba(0,255,136,0.1));
-            border-color: rgba(0,255,136,0.3);
-        }
-
-        .mode-btn.nav:hover {
-            background: linear-gradient(145deg, rgba(0,255,136,0.3), rgba(0,255,136,0.15));
-            border-color: rgba(0,255,136,0.6);
-        }
-
-        /* Info Panel */
-        .info-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 15px;
+        /* Info Bar */
+        .info-bar {
+            display: flex;
+            gap: 8px;
+            margin-top: 12px;
         }
 
         .info-item {
-            background: rgba(0,0,0,0.3);
-            padding: 15px;
+            flex: 1;
+            background: #f9fafb;
+            padding: 10px;
             border-radius: 10px;
+            text-align: center;
         }
 
-        .info-label {
+        .info-item .label {
             font-size: 10px;
-            color: rgba(255,255,255,0.4);
+            color: #9ca3af;
             text-transform: uppercase;
-            letter-spacing: 1px;
+            font-weight: 500;
         }
 
-        .info-value {
-            font-size: 18px;
-            font-weight: 300;
-            margin-top: 5px;
-            color: #00ff88;
+        .info-item .value {
+            font-size: 15px;
+            font-weight: 600;
+            color: #374151;
+            margin-top: 2px;
         }
 
-        /* Emergency Stop */
+        /* Emergency */
         .emergency-btn {
             width: 100%;
-            padding: 25px;
-            background: linear-gradient(145deg, #ff2222, #cc0000);
+            margin-top: 12px;
+            padding: 16px;
+            background: #ef4444;
             border: none;
-            border-radius: 15px;
+            border-radius: 12px;
             color: #fff;
-            font-size: 18px;
+            font-size: 15px;
             font-weight: 700;
+            letter-spacing: 1px;
             cursor: pointer;
-            text-transform: uppercase;
-            letter-spacing: 3px;
-            transition: all 0.2s ease;
-            box-shadow: 0 5px 30px rgba(255,0,0,0.3);
-        }
-
-        .emergency-btn:hover {
-            transform: scale(1.02);
-            box-shadow: 0 5px 40px rgba(255,0,0,0.5);
         }
 
         .emergency-btn:active {
-            transform: scale(0.98);
+            background: #dc2626;
         }
 
-        /* Footer */
-        .footer {
-            text-align: center;
-            padding: 30px;
-            color: rgba(255,255,255,0.3);
-            font-size: 12px;
-            margin-top: 30px;
-        }
-
-        /* Responsive */
-        @media (max-width: 1000px) {
-            .main-grid {
-                grid-template-columns: 1fr;
-            }
-        }
-
-        /* Map overlay */
-        .map-overlay {
-            position: absolute;
-            top: 60px;
-            right: 20px;
-            background: rgba(0,0,0,0.7);
-            padding: 10px;
+        /* Nav Controls */
+        .nav-hint {
+            background: #dbeafe;
+            border: 1px solid #93c5fd;
             border-radius: 10px;
-            font-size: 11px;
-            color: rgba(255,255,255,0.6);
+            padding: 14px;
+            text-align: center;
+            margin-bottom: 12px;
         }
 
-        .robot-icon {
+        .nav-hint p {
+            font-size: 13px;
+            color: #1e40af;
+        }
+
+        .nav-hint .coords {
+            font-size: 16px;
+            font-weight: 600;
+            color: #1d4ed8;
+            margin-top: 6px;
+        }
+
+        .nav-buttons {
+            display: flex;
+            gap: 10px;
+        }
+
+        .nav-btn {
+            flex: 1;
+            padding: 14px;
+            border: none;
+            border-radius: 10px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .nav-btn.go {
+            background: #22c55e;
+            color: #fff;
+        }
+
+        .nav-btn.go:disabled {
+            background: #d1d5db;
+        }
+
+        .nav-btn.cancel {
+            background: #f3f4f6;
+            color: #6b7280;
+        }
+
+        .nav-btn.home {
+            background: #3b82f6;
+            color: #fff;
+        }
+
+        /* Goal Marker on Map */
+        .goal-marker {
             position: absolute;
-            top: 50%;
-            left: 50%;
+            width: 24px;
+            height: 24px;
             transform: translate(-50%, -50%);
-            width: 30px;
-            height: 30px;
-            border: 3px solid #00ff88;
-            border-radius: 50%;
-            background: rgba(0,255,136,0.2);
+            pointer-events: none;
         }
 
-        .robot-direction {
+        .goal-marker::before {
+            content: '';
             position: absolute;
-            top: -15px;
+            width: 24px;
+            height: 24px;
+            background: #ef4444;
+            border-radius: 50% 50% 50% 0;
+            transform: rotate(-45deg);
+        }
+
+        .goal-marker::after {
+            content: '';
+            position: absolute;
+            top: 4px;
+            left: 4px;
+            width: 16px;
+            height: 16px;
+            background: #fff;
+            border-radius: 50%;
+        }
+
+        /* Direction Arrow */
+        .direction-arrow {
+            position: absolute;
+            width: 60px;
+            height: 60px;
+            transform: translate(-50%, -50%);
+            pointer-events: none;
+        }
+
+        .direction-arrow svg {
+            width: 100%;
+            height: 100%;
+        }
+
+        /* Toast */
+        .toast {
+            position: fixed;
+            bottom: 100px;
             left: 50%;
-            transform: translateX(-50%);
-            width: 0;
-            height: 0;
-            border-left: 8px solid transparent;
-            border-right: 8px solid transparent;
-            border-bottom: 15px solid #00ff88;
+            transform: translateX(-50%) translateY(100px);
+            background: #1f2937;
+            color: #fff;
+            padding: 12px 20px;
+            border-radius: 10px;
+            font-size: 14px;
+            z-index: 1000;
+            transition: transform 0.3s;
+        }
+
+        .toast.show {
+            transform: translateX(-50%) translateY(0);
+        }
+
+        /* SLAM buttons */
+        .slam-actions {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 12px;
+        }
+
+        .slam-btn {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            border-radius: 10px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .slam-btn.save {
+            background: #22c55e;
+            color: #fff;
+        }
+
+        .slam-btn.reset {
+            background: #f3f4f6;
+            color: #6b7280;
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <!-- Header -->
+    <div class="app">
         <header class="header">
-            <div class="logo-section">
-                <img src="logo.png" alt="RSAEM Logo">
+            <div class="logo">
+                <img src="logo.png" alt="">
                 <h1>RSAEM</h1>
             </div>
-            <div class="status-badge">
-                <div class="status-dot" id="status-dot"></div>
-                <span id="status-text">Connecting...</span>
+            <div class="status">
+                <span class="status-dot" id="statusDot"></span>
+                <span id="statusText">Connecting</span>
             </div>
         </header>
 
-        <!-- Main Content -->
-        <div class="main-grid">
-            <!-- Visualization Panel -->
-            <div class="viz-panel">
-                <h2>LiDAR Visualization</h2>
-                <canvas id="lidar-canvas"></canvas>
-                <div class="map-overlay">
-                    <div>Range: 12m</div>
-                    <div>Points: <span id="point-count">0</span></div>
+        <nav class="tabs">
+            <button class="tab active" data-page="teleop">Control</button>
+            <button class="tab" data-page="slam">SLAM</button>
+            <button class="tab" data-page="nav">Navigate</button>
+        </nav>
+
+        <main class="main">
+            <!-- Teleop Page -->
+            <div class="page active" id="page-teleop">
+                <div class="view-panel">
+                    <canvas id="lidarCanvas"></canvas>
+                    <div class="view-label">LiDAR</div>
+                    <div class="view-stats">
+                        <span id="pointCount">0</span> pts
+                    </div>
+                    <div class="camera-container" id="cameraContainer" onclick="toggleCamera()">
+                        <img id="cameraImg" src="" alt="Camera">
+                    </div>
                 </div>
-                <div class="robot-icon" id="robot-icon">
-                    <div class="robot-direction"></div>
+
+                <div class="control-panel">
+                    <div class="joystick-section">
+                        <div class="speed-display">
+                            <div class="speed-value" id="linearSpeed">0.00</div>
+                            <div class="speed-unit">m/s</div>
+                        </div>
+                        <div class="joystick-zone" id="joystickZone"></div>
+                        <div class="speed-display">
+                            <div class="speed-value" id="angularSpeed">0.00</div>
+                            <div class="speed-unit">rad/s</div>
+                        </div>
+                    </div>
+
+                    <div class="info-bar">
+                        <div class="info-item">
+                            <div class="label">X</div>
+                            <div class="value" id="posX">0.00</div>
+                        </div>
+                        <div class="info-item">
+                            <div class="label">Y</div>
+                            <div class="value" id="posY">0.00</div>
+                        </div>
+                        <div class="info-item">
+                            <div class="label">Heading</div>
+                            <div class="value" id="heading">0°</div>
+                        </div>
+                        <div class="info-item">
+                            <div class="label">Speed</div>
+                            <div class="value" id="speed">0.00</div>
+                        </div>
+                    </div>
+
+                    <button class="emergency-btn" onclick="emergencyStop()">STOP</button>
                 </div>
             </div>
 
-            <!-- Control Panel -->
-            <div class="control-panel">
-                <!-- Joystick Card -->
-                <div class="card">
-                    <h3>Manual Control</h3>
-                    <div class="joystick-container">
-                        <div class="joystick" id="joystick">
-                            <div class="joystick-arrows">
-                                <span class="arrow up">&#9650;</span>
-                                <span class="arrow down">&#9660;</span>
-                                <span class="arrow left">&#9664;</span>
-                                <span class="arrow right">&#9654;</span>
-                            </div>
-                            <div class="joystick-knob" id="joystick-knob"></div>
-                        </div>
-                    </div>
-                    <div class="speed-display">
-                        <div class="speed-item">
-                            <div class="speed-value" id="linear-speed">0.00</div>
-                            <div class="speed-label">Linear m/s</div>
-                        </div>
-                        <div class="speed-item">
-                            <div class="speed-value" id="angular-speed">0.00</div>
-                            <div class="speed-label">Angular rad/s</div>
-                        </div>
-                    </div>
+            <!-- SLAM Page -->
+            <div class="page" id="page-slam">
+                <div class="view-panel">
+                    <canvas id="slamCanvas"></canvas>
+                    <div class="view-label">SLAM Mapping</div>
+                    <div class="view-stats">Drive slowly</div>
                 </div>
 
-                <!-- Mode Selection -->
-                <div class="card">
-                    <h3>Operation Mode</h3>
-                    <div class="mode-buttons">
-                        <button class="mode-btn active" id="btn-teleop" onclick="setMode('teleop')">Teleop</button>
-                        <button class="mode-btn" id="btn-auto" onclick="setMode('auto')">Auto</button>
-                        <button class="mode-btn slam" id="btn-slam" onclick="startSLAM()">Start SLAM</button>
-                        <button class="mode-btn nav" id="btn-nav" onclick="startNav()">Navigation</button>
+                <div class="control-panel">
+                    <div class="slam-actions">
+                        <button class="slam-btn save" onclick="saveMap()">Save Map</button>
+                        <button class="slam-btn reset" onclick="toast('Drive to explore')">Help</button>
                     </div>
-                </div>
 
-                <!-- Robot Info -->
-                <div class="card">
-                    <h3>Robot Status</h3>
-                    <div class="info-grid">
-                        <div class="info-item">
-                            <div class="info-label">Battery</div>
-                            <div class="info-value" id="battery">---%</div>
+                    <div class="joystick-section">
+                        <div class="speed-display">
+                            <div class="speed-value" id="slamLinear">0.00</div>
+                            <div class="speed-unit">m/s</div>
                         </div>
-                        <div class="info-item">
-                            <div class="info-label">CPU Temp</div>
-                            <div class="info-value" id="cpu-temp">---°C</div>
-                        </div>
-                        <div class="info-item">
-                            <div class="info-label">Position X</div>
-                            <div class="info-value" id="pos-x">0.00m</div>
-                        </div>
-                        <div class="info-item">
-                            <div class="info-label">Position Y</div>
-                            <div class="info-value" id="pos-y">0.00m</div>
+                        <div class="joystick-zone" id="slamJoystickZone"></div>
+                        <div class="speed-display">
+                            <div class="speed-value" id="slamAngular">0.00</div>
+                            <div class="speed-unit">rad/s</div>
                         </div>
                     </div>
-                </div>
 
-                <!-- Emergency Stop -->
-                <button class="emergency-btn" onclick="emergencyStop()">
-                    Emergency Stop
-                </button>
+                    <button class="emergency-btn" onclick="emergencyStop()">STOP</button>
+                </div>
             </div>
-        </div>
 
-        <footer class="footer">
-            RSAEM Robot Control Interface | Powered by ROS2 Humble
-        </footer>
+            <!-- Navigation Page -->
+            <div class="page" id="page-nav">
+                <div class="view-panel" id="navViewPanel">
+                    <canvas id="navCanvas"></canvas>
+                    <div class="view-label">Navigation</div>
+                    <div class="view-stats" id="navStats">Tap to set goal</div>
+                </div>
+
+                <div class="control-panel">
+                    <div class="nav-hint" id="navHint">
+                        <p>Tap on map to set destination</p>
+                        <p>Drag to set direction</p>
+                        <div class="coords" id="goalCoords">--</div>
+                    </div>
+
+                    <div class="nav-buttons">
+                        <button class="nav-btn go" id="btnGo" onclick="sendGoal()" disabled>GO</button>
+                        <button class="nav-btn cancel" onclick="cancelNav()">Cancel</button>
+                        <button class="nav-btn home" onclick="goHome()">Home</button>
+                    </div>
+
+                    <button class="emergency-btn" onclick="emergencyStop()">STOP</button>
+                </div>
+            </div>
+        </main>
     </div>
 
+    <div class="toast" id="toast"></div>
+
     <script>
-        // ROS Connection
-        let ros = null;
-        let cmdVelPub = null;
-        let lidarSub = null;
-        let odomSub = null;
-        let currentMode = 'teleop';
+        // Prevent scrolling
+        document.addEventListener('touchmove', e => e.preventDefault(), { passive: false });
 
-        // Canvas setup
-        const canvas = document.getElementById('lidar-canvas');
-        const ctx = canvas.getContext('2d');
+        // State
+        let ros, cmdVelPub;
+        let robotPose = { x: 0, y: 0, theta: 0 };
+        let mapData = null;
+        let goalPose = null;
+        let currentPage = 'teleop';
+        let lidarData = null;
+        let lastLidarDraw = 0;
 
-        function resizeCanvas() {
-            canvas.width = canvas.offsetWidth;
-            canvas.height = canvas.offsetHeight;
+        const MAX_LINEAR = 0.25;
+        const MAX_ANGULAR = 1.2;
+        const LIDAR_THROTTLE = 100; // ms
+
+        // Canvas contexts
+        const lidarCanvas = document.getElementById('lidarCanvas');
+        const slamCanvas = document.getElementById('slamCanvas');
+        const navCanvas = document.getElementById('navCanvas');
+
+        // Resize canvases
+        function resizeCanvas(canvas) {
+            const rect = canvas.parentElement.getBoundingClientRect();
+            canvas.width = rect.width;
+            canvas.height = rect.height;
         }
-        resizeCanvas();
-        window.addEventListener('resize', resizeCanvas);
 
-        // Connect to ROS
-        function connectROS() {
-            const host = window.location.hostname || 'localhost';
-            ros = new ROSLIB.Ros({
-                url: `ws://${host}:9090`
+        function resizeAll() {
+            [lidarCanvas, slamCanvas, navCanvas].forEach(resizeCanvas);
+        }
+
+        window.addEventListener('resize', resizeAll);
+        setTimeout(resizeAll, 100);
+
+        // Tab switching
+        document.querySelectorAll('.tab').forEach(tab => {
+            tab.addEventListener('click', () => {
+                document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+                document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+                tab.classList.add('active');
+                const page = tab.dataset.page;
+                document.getElementById(`page-${page}`).classList.add('active');
+                currentPage = page;
+                setTimeout(resizeAll, 50);
             });
+        });
+
+        // Toast
+        function toast(msg) {
+            const el = document.getElementById('toast');
+            el.textContent = msg;
+            el.classList.add('show');
+            setTimeout(() => el.classList.remove('show'), 2500);
+        }
+
+        // ROS Connection
+        function connect() {
+            const host = location.hostname || 'localhost';
+            ros = new ROSLIB.Ros({ url: `ws://${host}:9090` });
 
             ros.on('connection', () => {
-                console.log('Connected to ROS');
-                document.getElementById('status-dot').classList.add('connected');
-                document.getElementById('status-text').textContent = 'Connected';
+                document.getElementById('statusDot').classList.add('ok');
+                document.getElementById('statusText').textContent = 'Connected';
+                toast('Connected to robot');
                 setupTopics();
             });
 
-            ros.on('error', (error) => {
-                console.log('Error:', error);
-                document.getElementById('status-dot').classList.remove('connected');
-                document.getElementById('status-text').textContent = 'Error';
-            });
-
             ros.on('close', () => {
-                console.log('Disconnected');
-                document.getElementById('status-dot').classList.remove('connected');
-                document.getElementById('status-text').textContent = 'Disconnected';
-                setTimeout(connectROS, 3000);
+                document.getElementById('statusDot').classList.remove('ok');
+                document.getElementById('statusText').textContent = 'Disconnected';
+                setTimeout(connect, 3000);
             });
         }
 
         function setupTopics() {
-            // cmd_vel publisher
             cmdVelPub = new ROSLIB.Topic({
-                ros: ros,
-                name: '/cmd_vel',
-                messageType: 'geometry_msgs/Twist'
+                ros, name: '/cmd_vel', messageType: 'geometry_msgs/Twist'
             });
 
-            // LaserScan subscriber
-            lidarSub = new ROSLIB.Topic({
-                ros: ros,
-                name: '/scan',
-                messageType: 'sensor_msgs/LaserScan'
-            });
+            new ROSLIB.Topic({
+                ros, name: '/scan', messageType: 'sensor_msgs/LaserScan'
+            }).subscribe(onLidar);
 
-            lidarSub.subscribe((msg) => {
-                drawLidar(msg);
-            });
+            new ROSLIB.Topic({
+                ros, name: '/odom', messageType: 'nav_msgs/Odometry'
+            }).subscribe(onOdom);
 
-            // Odometry subscriber
-            odomSub = new ROSLIB.Topic({
-                ros: ros,
-                name: '/odom',
-                messageType: 'nav_msgs/Odometry'
-            });
+            new ROSLIB.Topic({
+                ros, name: '/map', messageType: 'nav_msgs/OccupancyGrid'
+            }).subscribe(onMap);
 
-            odomSub.subscribe((msg) => {
-                updateOdom(msg);
-            });
+            // Setup camera
+            const host = location.hostname || 'localhost';
+            document.getElementById('cameraImg').src = `http://${host}:8080/stream?topic=/camera/image_raw&type=mjpeg&quality=50`;
         }
 
-        // Draw LiDAR data
-        function drawLidar(scan) {
-            ctx.fillStyle = 'rgba(10, 10, 20, 0.3)';
+        // LiDAR drawing with throttle
+        function onLidar(scan) {
+            lidarData = scan;
+            const now = Date.now();
+            if (now - lastLidarDraw < LIDAR_THROTTLE) return;
+            lastLidarDraw = now;
+
+            const canvas = currentPage === 'slam' ? slamCanvas : lidarCanvas;
+            if (canvas.width === 0) return;
+
+            const ctx = canvas.getContext('2d');
+            ctx.fillStyle = '#1e293b';
             ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-            const centerX = canvas.width / 2;
-            const centerY = canvas.height / 2;
-            const scale = Math.min(canvas.width, canvas.height) / 24; // 12m range
+            const cx = canvas.width / 2;
+            const cy = canvas.height / 2;
+            const scale = Math.min(canvas.width, canvas.height) / 24;
 
-            // Draw range circles
-            ctx.strokeStyle = 'rgba(0, 150, 255, 0.1)';
-            ctx.lineWidth = 1;
+            // Grid
+            ctx.strokeStyle = 'rgba(100,150,200,0.1)';
             for (let r = 2; r <= 12; r += 2) {
                 ctx.beginPath();
-                ctx.arc(centerX, centerY, r * scale, 0, Math.PI * 2);
+                ctx.arc(cx, cy, r * scale, 0, Math.PI * 2);
                 ctx.stroke();
             }
 
-            // Draw cross
-            ctx.strokeStyle = 'rgba(255, 255, 255, 0.1)';
-            ctx.beginPath();
-            ctx.moveTo(centerX, 0);
-            ctx.lineTo(centerX, canvas.height);
-            ctx.moveTo(0, centerY);
-            ctx.lineTo(canvas.width, centerY);
-            ctx.stroke();
-
-            // Draw LiDAR points
-            let pointCount = 0;
-            ctx.fillStyle = '#00ff88';
-
-            for (let i = 0; i < scan.ranges.length; i++) {
-                const range = scan.ranges[i];
-                if (range > scan.range_min && range < scan.range_max) {
-                    const angle = scan.angle_min + i * scan.angle_increment;
-                    const x = centerX + range * scale * Math.cos(angle - Math.PI/2);
-                    const y = centerY + range * scale * Math.sin(angle - Math.PI/2);
-
+            // Points (sample every 3rd point for performance)
+            let count = 0;
+            ctx.fillStyle = '#4ade80';
+            for (let i = 0; i < scan.ranges.length; i += 3) {
+                const r = scan.ranges[i];
+                if (r > scan.range_min && r < scan.range_max) {
+                    const a = scan.angle_min + i * scan.angle_increment;
                     ctx.beginPath();
-                    ctx.arc(x, y, 2, 0, Math.PI * 2);
+                    ctx.arc(cx + r * scale * Math.cos(a - Math.PI/2),
+                            cy + r * scale * Math.sin(a - Math.PI/2), 2, 0, Math.PI * 2);
                     ctx.fill();
-                    pointCount++;
+                    count++;
                 }
             }
 
-            // Draw robot
-            ctx.fillStyle = '#0096ff';
+            // Robot
+            ctx.fillStyle = '#3b82f6';
             ctx.beginPath();
-            ctx.arc(centerX, centerY, 8, 0, Math.PI * 2);
+            ctx.arc(cx, cy, 6, 0, Math.PI * 2);
             ctx.fill();
 
-            // Direction indicator
-            ctx.strokeStyle = '#0096ff';
-            ctx.lineWidth = 3;
+            ctx.strokeStyle = '#3b82f6';
+            ctx.lineWidth = 2;
             ctx.beginPath();
-            ctx.moveTo(centerX, centerY);
-            ctx.lineTo(centerX, centerY - 20);
+            ctx.moveTo(cx, cy);
+            ctx.lineTo(cx, cy - 15);
             ctx.stroke();
 
-            document.getElementById('point-count').textContent = pointCount;
+            document.getElementById('pointCount').textContent = count * 3;
         }
 
-        // Update odometry display
-        function updateOdom(odom) {
-            const x = odom.pose.pose.position.x.toFixed(2);
-            const y = odom.pose.pose.position.y.toFixed(2);
-            document.getElementById('pos-x').textContent = x + 'm';
-            document.getElementById('pos-y').textContent = y + 'm';
+        // Odometry
+        function onOdom(odom) {
+            robotPose.x = odom.pose.pose.position.x;
+            robotPose.y = odom.pose.pose.position.y;
+            const q = odom.pose.pose.orientation;
+            robotPose.theta = Math.atan2(2 * (q.w * q.z + q.x * q.y), 1 - 2 * (q.y * q.y + q.z * q.z));
+
+            document.getElementById('posX').textContent = robotPose.x.toFixed(2);
+            document.getElementById('posY').textContent = robotPose.y.toFixed(2);
+            document.getElementById('heading').textContent = Math.round(robotPose.theta * 180 / Math.PI) + '°';
+
+            const spd = Math.sqrt(odom.twist.twist.linear.x ** 2 + odom.twist.twist.linear.y ** 2);
+            document.getElementById('speed').textContent = spd.toFixed(2);
         }
 
-        // Joystick control
-        const joystick = document.getElementById('joystick');
-        const knob = document.getElementById('joystick-knob');
-        let isDragging = false;
-        let maxLinear = 0.3;
-        let maxAngular = 1.5;
-
-        function handleJoystick(e) {
-            if (!isDragging) return;
-
-            const rect = joystick.getBoundingClientRect();
-            const centerX = rect.width / 2;
-            const centerY = rect.height / 2;
-
-            let clientX, clientY;
-            if (e.touches) {
-                clientX = e.touches[0].clientX;
-                clientY = e.touches[0].clientY;
-            } else {
-                clientX = e.clientX;
-                clientY = e.clientY;
-            }
-
-            let x = clientX - rect.left - centerX;
-            let y = clientY - rect.top - centerY;
-
-            const maxDist = 55;
-            const dist = Math.sqrt(x * x + y * y);
-            if (dist > maxDist) {
-                x = x / dist * maxDist;
-                y = y / dist * maxDist;
-            }
-
-            knob.style.transform = `translate(calc(-50% + ${x}px), calc(-50% + ${y}px))`;
-
-            const linear = -y / maxDist * maxLinear;
-            const angular = -x / maxDist * maxAngular;
-
-            document.getElementById('linear-speed').textContent = linear.toFixed(2);
-            document.getElementById('angular-speed').textContent = angular.toFixed(2);
-
-            if (cmdVelPub && currentMode === 'teleop') {
-                const twist = new ROSLIB.Message({
-                    linear: { x: linear, y: 0, z: 0 },
-                    angular: { x: 0, y: 0, z: angular }
-                });
-                cmdVelPub.publish(twist);
-            }
+        // Map
+        function onMap(msg) {
+            mapData = msg;
+            if (currentPage === 'nav') drawMap();
         }
 
-        function resetJoystick() {
-            isDragging = false;
-            knob.style.transform = 'translate(-50%, -50%)';
-            document.getElementById('linear-speed').textContent = '0.00';
-            document.getElementById('angular-speed').textContent = '0.00';
+        function drawMap() {
+            if (!mapData || navCanvas.width === 0) return;
 
-            if (cmdVelPub) {
-                const twist = new ROSLIB.Message({
-                    linear: { x: 0, y: 0, z: 0 },
-                    angular: { x: 0, y: 0, z: 0 }
-                });
-                cmdVelPub.publish(twist);
-            }
-        }
+            const ctx = navCanvas.getContext('2d');
+            const W = mapData.info.width;
+            const H = mapData.info.height;
+            const res = mapData.info.resolution;
+            const ox = mapData.info.origin.position.x;
+            const oy = mapData.info.origin.position.y;
 
-        joystick.addEventListener('mousedown', () => isDragging = true);
-        joystick.addEventListener('touchstart', () => isDragging = true);
-        document.addEventListener('mousemove', handleJoystick);
-        document.addEventListener('touchmove', handleJoystick);
-        document.addEventListener('mouseup', resetJoystick);
-        document.addEventListener('touchend', resetJoystick);
+            ctx.fillStyle = '#1e293b';
+            ctx.fillRect(0, 0, navCanvas.width, navCanvas.height);
 
-        // Keyboard control
-        document.addEventListener('keydown', (e) => {
-            if (currentMode !== 'teleop') return;
+            const scale = Math.min(navCanvas.width / W, navCanvas.height / H) * 0.9;
+            const offX = (navCanvas.width - W * scale) / 2;
+            const offY = (navCanvas.height - H * scale) / 2;
 
-            let linear = 0, angular = 0;
-            switch(e.key) {
-                case 'w': case 'ArrowUp': linear = maxLinear; break;
-                case 's': case 'ArrowDown': linear = -maxLinear; break;
-                case 'a': case 'ArrowLeft': angular = maxAngular; break;
-                case 'd': case 'ArrowRight': angular = -maxAngular; break;
-                case ' ': emergencyStop(); return;
+            // Draw map
+            const imgData = ctx.createImageData(W, H);
+            for (let i = 0; i < mapData.data.length; i++) {
+                const v = mapData.data[i];
+                const c = v === -1 ? [40, 50, 60] : v === 0 ? [200, 210, 220] : [30, 40, 50];
+                imgData.data[i * 4] = c[0];
+                imgData.data[i * 4 + 1] = c[1];
+                imgData.data[i * 4 + 2] = c[2];
+                imgData.data[i * 4 + 3] = 255;
             }
 
-            if (cmdVelPub && (linear !== 0 || angular !== 0)) {
-                const twist = new ROSLIB.Message({
-                    linear: { x: linear, y: 0, z: 0 },
-                    angular: { x: 0, y: 0, z: angular }
-                });
-                cmdVelPub.publish(twist);
-                document.getElementById('linear-speed').textContent = linear.toFixed(2);
-                document.getElementById('angular-speed').textContent = angular.toFixed(2);
-            }
-        });
+            const tmp = document.createElement('canvas');
+            tmp.width = W;
+            tmp.height = H;
+            tmp.getContext('2d').putImageData(imgData, 0, 0);
 
-        document.addEventListener('keyup', (e) => {
-            if (['w','s','a','d','ArrowUp','ArrowDown','ArrowLeft','ArrowRight'].includes(e.key)) {
-                resetJoystick();
-            }
-        });
+            ctx.save();
+            ctx.translate(offX, offY + H * scale);
+            ctx.scale(scale, -scale);
+            ctx.drawImage(tmp, 0, 0);
+            ctx.restore();
 
-        // Mode control
-        function setMode(mode) {
-            currentMode = mode;
-            document.querySelectorAll('.mode-btn').forEach(btn => btn.classList.remove('active'));
-            document.getElementById('btn-' + mode).classList.add('active');
-            resetJoystick();
-        }
+            // Robot
+            const rx = offX + (robotPose.x - ox) / res * scale;
+            const ry = offY + H * scale - (robotPose.y - oy) / res * scale;
 
-        // SLAM
-        function startSLAM() {
-            if (!ros) return;
+            ctx.fillStyle = '#3b82f6';
+            ctx.beginPath();
+            ctx.arc(rx, ry, 8, 0, Math.PI * 2);
+            ctx.fill();
 
-            const slamService = new ROSLIB.Service({
-                ros: ros,
-                name: '/slam_control',
-                serviceType: 'std_srvs/SetBool'
-            });
+            // Goal
+            if (goalPose) {
+                const gx = offX + (goalPose.x - ox) / res * scale;
+                const gy = offY + H * scale - (goalPose.y - oy) / res * scale;
 
-            alert('SLAM mode started!\nUse teleop to map the environment.');
-            setMode('teleop');
-        }
+                // Goal marker
+                ctx.fillStyle = '#ef4444';
+                ctx.beginPath();
+                ctx.arc(gx, gy, 10, 0, Math.PI * 2);
+                ctx.fill();
 
-        // Navigation
-        function startNav() {
-            if (!ros) return;
-            alert('Navigation mode!\nClick on the map to set goal.');
-            setMode('auto');
-        }
+                ctx.fillStyle = '#fff';
+                ctx.beginPath();
+                ctx.arc(gx, gy, 5, 0, Math.PI * 2);
+                ctx.fill();
 
-        // Emergency Stop
-        function emergencyStop() {
-            if (cmdVelPub) {
-                const twist = new ROSLIB.Message({
-                    linear: { x: 0, y: 0, z: 0 },
-                    angular: { x: 0, y: 0, z: 0 }
-                });
-                for (let i = 0; i < 5; i++) {
-                    cmdVelPub.publish(twist);
+                // Direction arrow
+                if (goalPose.theta !== undefined) {
+                    ctx.strokeStyle = '#ef4444';
+                    ctx.lineWidth = 3;
+                    ctx.beginPath();
+                    ctx.moveTo(gx, gy);
+                    ctx.lineTo(gx + Math.cos(-goalPose.theta + Math.PI/2) * 25,
+                               gy + Math.sin(-goalPose.theta + Math.PI/2) * 25);
+                    ctx.stroke();
+
+                    // Arrow head
+                    const ax = gx + Math.cos(-goalPose.theta + Math.PI/2) * 25;
+                    const ay = gy + Math.sin(-goalPose.theta + Math.PI/2) * 25;
+                    ctx.fillStyle = '#ef4444';
+                    ctx.beginPath();
+                    ctx.arc(ax, ay, 5, 0, Math.PI * 2);
+                    ctx.fill();
                 }
             }
-            resetJoystick();
-            document.getElementById('linear-speed').style.color = '#ff4444';
-            document.getElementById('angular-speed').style.color = '#ff4444';
-            setTimeout(() => {
-                document.getElementById('linear-speed').style.color = '#00ff88';
-                document.getElementById('angular-speed').style.color = '#00ff88';
-            }, 500);
+
+            // Store transform info for click handling
+            navCanvas._mapInfo = { offX, offY, scale, W, H, ox, oy, res };
         }
 
-        // Initialize
-        connectROS();
+        // Navigation canvas interaction
+        let dragStart = null;
 
-        // Initial canvas draw
-        ctx.fillStyle = '#0a0a14';
-        ctx.fillRect(0, 0, canvas.width, canvas.height);
-        ctx.fillStyle = 'rgba(255,255,255,0.3)';
-        ctx.font = '14px sans-serif';
-        ctx.textAlign = 'center';
-        ctx.fillText('Waiting for LiDAR data...', canvas.width/2, canvas.height/2);
+        navCanvas.addEventListener('touchstart', e => {
+            e.preventDefault();
+            const touch = e.touches[0];
+            handleNavStart(touch.clientX, touch.clientY);
+        });
+
+        navCanvas.addEventListener('touchmove', e => {
+            e.preventDefault();
+            if (!dragStart) return;
+            const touch = e.touches[0];
+            handleNavMove(touch.clientX, touch.clientY);
+        });
+
+        navCanvas.addEventListener('touchend', e => {
+            e.preventDefault();
+            handleNavEnd();
+        });
+
+        navCanvas.addEventListener('mousedown', e => {
+            handleNavStart(e.clientX, e.clientY);
+        });
+
+        navCanvas.addEventListener('mousemove', e => {
+            if (!dragStart) return;
+            handleNavMove(e.clientX, e.clientY);
+        });
+
+        navCanvas.addEventListener('mouseup', () => {
+            handleNavEnd();
+        });
+
+        function handleNavStart(clientX, clientY) {
+            if (!mapData || !navCanvas._mapInfo) {
+                toast('No map available');
+                return;
+            }
+
+            const rect = navCanvas.getBoundingClientRect();
+            const x = clientX - rect.left;
+            const y = clientY - rect.top;
+
+            const info = navCanvas._mapInfo;
+            const mapX = (x - info.offX) / info.scale;
+            const mapY = info.H - (y - info.offY) / info.scale;
+
+            goalPose = {
+                x: info.ox + mapX * info.res,
+                y: info.oy + mapY * info.res,
+                theta: 0
+            };
+
+            dragStart = { x, y };
+            drawMap();
+        }
+
+        function handleNavMove(clientX, clientY) {
+            if (!dragStart || !goalPose) return;
+
+            const rect = navCanvas.getBoundingClientRect();
+            const x = clientX - rect.left;
+            const y = clientY - rect.top;
+
+            const dx = x - dragStart.x;
+            const dy = y - dragStart.y;
+
+            if (Math.sqrt(dx*dx + dy*dy) > 20) {
+                goalPose.theta = Math.atan2(-dy, dx) - Math.PI/2;
+                drawMap();
+            }
+        }
+
+        function handleNavEnd() {
+            if (goalPose) {
+                document.getElementById('goalCoords').textContent =
+                    `X: ${goalPose.x.toFixed(2)} Y: ${goalPose.y.toFixed(2)}`;
+                document.getElementById('btnGo').disabled = false;
+                toast('Goal set! Tap GO to navigate');
+            }
+            dragStart = null;
+        }
+
+        // Navigation actions
+        function sendGoal() {
+            if (!goalPose) return;
+
+            const goalPub = new ROSLIB.Topic({
+                ros, name: '/goal_pose', messageType: 'geometry_msgs/PoseStamped'
+            });
+
+            const qz = Math.sin((goalPose.theta || 0) / 2);
+            const qw = Math.cos((goalPose.theta || 0) / 2);
+
+            goalPub.publish(new ROSLIB.Message({
+                header: { frame_id: 'map', stamp: { sec: 0, nanosec: 0 } },
+                pose: {
+                    position: { x: goalPose.x, y: goalPose.y, z: 0 },
+                    orientation: { x: 0, y: 0, z: qz, w: qw }
+                }
+            }));
+
+            document.getElementById('navStats').textContent = 'Navigating...';
+            toast('Navigation started!');
+        }
+
+        function cancelNav() {
+            stopRobot();
+            document.getElementById('navStats').textContent = 'Cancelled';
+            toast('Navigation cancelled');
+        }
+
+        function goHome() {
+            goalPose = { x: 0, y: 0, theta: 0 };
+            document.getElementById('goalCoords').textContent = 'X: 0.00 Y: 0.00';
+            document.getElementById('btnGo').disabled = false;
+            drawMap();
+            toast('Home position set');
+        }
+
+        function saveMap() {
+            toast('Run: ros2 run nav2_map_server map_saver_cli -f ~/map');
+        }
+
+        // Joystick
+        function setupJoystick(zoneId, linearId, angularId, speedMult = 1) {
+            const zone = document.getElementById(zoneId);
+            const joystick = nipplejs.create({
+                zone: zone,
+                mode: 'static',
+                position: { left: '50%', top: '50%' },
+                color: '#3b82f6',
+                size: 120
+            });
+
+            joystick.on('move', (evt, data) => {
+                const force = Math.min(data.force, 2) / 2;
+                const angle = data.angle.radian;
+
+                const linear = Math.sin(angle) * force * MAX_LINEAR * speedMult;
+                const angular = -Math.cos(angle) * force * MAX_ANGULAR * speedMult;
+
+                sendVelocity(linear, angular);
+                document.getElementById(linearId).textContent = linear.toFixed(2);
+                document.getElementById(angularId).textContent = angular.toFixed(2);
+            });
+
+            joystick.on('end', () => {
+                stopRobot();
+                document.getElementById(linearId).textContent = '0.00';
+                document.getElementById(angularId).textContent = '0.00';
+            });
+        }
+
+        function sendVelocity(linear, angular) {
+            if (!cmdVelPub) return;
+            cmdVelPub.publish(new ROSLIB.Message({
+                linear: { x: linear, y: 0, z: 0 },
+                angular: { x: 0, y: 0, z: angular }
+            }));
+        }
+
+        function stopRobot() {
+            sendVelocity(0, 0);
+        }
+
+        function emergencyStop() {
+            for (let i = 0; i < 5; i++) stopRobot();
+            toast('EMERGENCY STOP');
+        }
+
+        // Camera toggle
+        function toggleCamera() {
+            document.getElementById('cameraContainer').classList.toggle('fullscreen');
+        }
+
+        // Keyboard
+        document.addEventListener('keydown', e => {
+            const key = e.key.toLowerCase();
+            if (key === 'w') sendVelocity(MAX_LINEAR, 0);
+            else if (key === 's') sendVelocity(-MAX_LINEAR, 0);
+            else if (key === 'a') sendVelocity(0, MAX_ANGULAR);
+            else if (key === 'd') sendVelocity(0, -MAX_ANGULAR);
+            else if (key === ' ') emergencyStop();
+        });
+
+        document.addEventListener('keyup', e => {
+            if (['w','a','s','d'].includes(e.key.toLowerCase())) stopRobot();
+        });
+
+        // Init
+        connect();
+        setTimeout(() => {
+            setupJoystick('joystickZone', 'linearSpeed', 'angularSpeed');
+            setupJoystick('slamJoystickZone', 'slamLinear', 'slamAngular', 0.8);
+        }, 200);
+
+        // Periodic map redraw
+        setInterval(() => {
+            if (currentPage === 'nav' && mapData) drawMap();
+        }, 500);
     </script>
 </body>
 </html>
