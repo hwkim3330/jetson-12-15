@@ -46,16 +46,31 @@ options = {
 
 MAP_BUILDER.use_trajectory_builder_2d = true
 
-TRAJECTORY_BUILDER_2D.min_range = 0.12
-TRAJECTORY_BUILDER_2D.max_range = 3.5
-TRAJECTORY_BUILDER_2D.missing_data_ray_length = 3.
+-- STL-19P LiDAR Optimized Settings
+-- Range: 0.03m - 12m, 10Hz, ~450 points/rev
+TRAJECTORY_BUILDER_2D.min_range = 0.05           -- 5cm (safety margin from 3cm spec)
+TRAJECTORY_BUILDER_2D.max_range = 10.0           -- 10m (practical indoor range)
+TRAJECTORY_BUILDER_2D.missing_data_ray_length = 8.0
 TRAJECTORY_BUILDER_2D.use_imu_data = false
-TRAJECTORY_BUILDER_2D.use_online_correlative_scan_matching = true 
-TRAJECTORY_BUILDER_2D.motion_filter.max_angle_radians = math.rad(0.1)
+TRAJECTORY_BUILDER_2D.use_online_correlative_scan_matching = true
 
-POSE_GRAPH.constraint_builder.min_score = 0.65
-POSE_GRAPH.constraint_builder.global_localization_min_score = 0.7
+-- Scan matching optimization for 10Hz, 450 points
+TRAJECTORY_BUILDER_2D.num_accumulated_range_data = 1
+TRAJECTORY_BUILDER_2D.voxel_filter_size = 0.025   -- 2.5cm voxel for ~450 points
 
--- POSE_GRAPH.optimize_every_n_nodes = 0
+-- Motion filter (for slow indoor robot)
+TRAJECTORY_BUILDER_2D.motion_filter.max_time_seconds = 0.5
+TRAJECTORY_BUILDER_2D.motion_filter.max_distance_meters = 0.1
+TRAJECTORY_BUILDER_2D.motion_filter.max_angle_radians = math.rad(0.5)
+
+-- Submap settings for better map quality
+TRAJECTORY_BUILDER_2D.submaps.num_range_data = 90
+TRAJECTORY_BUILDER_2D.submaps.grid_options_2d.resolution = 0.05  -- 5cm map resolution
+
+-- Pose graph optimization
+POSE_GRAPH.constraint_builder.min_score = 0.55
+POSE_GRAPH.constraint_builder.global_localization_min_score = 0.6
+POSE_GRAPH.optimization_problem.huber_scale = 1e1
+POSE_GRAPH.optimize_every_n_nodes = 35
 
 return options
