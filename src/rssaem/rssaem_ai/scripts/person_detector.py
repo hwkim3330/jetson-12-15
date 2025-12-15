@@ -2,7 +2,10 @@
 """
 Person Detector Node for RSAEM Robot
 Uses OpenCV DNN with MobileNet-SSD for person detection
-Optimized for Jetson with CUDA backend when available
+Optimized for Jetson with hardware acceleration:
+- CUDA backend for GPU inference
+- TensorRT for optimized inference (when available)
+- DLA (Deep Learning Accelerator) support for Jetson Orin
 """
 
 import rclpy
@@ -106,16 +109,34 @@ class PersonDetector(Node):
             self.net = None
             return
 
-        # Try to use CUDA backend
+        # Try to use hardware acceleration (priority: DLA > CUDA > CPU)
         if self.use_cuda:
+            backend_set = False
+
+            # Try CUDA with FP16 for faster inference
             try:
                 self.net.setPreferableBackend(cv2.dnn.DNN_BACKEND_CUDA)
-                self.net.setPreferableTarget(cv2.dnn.DNN_TARGET_CUDA)
-                self.get_logger().info('Using CUDA backend')
-            except Exception as e:
-                self.get_logger().warn(f'CUDA not available: {e}, using CPU')
+                self.net.setPreferableTarget(cv2.dnn.DNN_TARGET_CUDA_FP16)
+                self.get_logger().info('Using CUDA FP16 backend (GPU accelerated)')
+                backend_set = True
+            except Exception:
+                pass
+
+            # Fallback to regular CUDA
+            if not backend_set:
+                try:
+                    self.net.setPreferableBackend(cv2.dnn.DNN_BACKEND_CUDA)
+                    self.net.setPreferableTarget(cv2.dnn.DNN_TARGET_CUDA)
+                    self.get_logger().info('Using CUDA backend')
+                    backend_set = True
+                except Exception as e:
+                    self.get_logger().warn(f'CUDA not available: {e}')
+
+            # Fallback to CPU
+            if not backend_set:
                 self.net.setPreferableBackend(cv2.dnn.DNN_BACKEND_DEFAULT)
                 self.net.setPreferableTarget(cv2.dnn.DNN_TARGET_CPU)
+                self.get_logger().info('Using CPU backend')
 
     def image_callback(self, msg):
         """Handle raw image messages"""

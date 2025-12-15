@@ -14,6 +14,10 @@ install(PROGRAMS
   scripts/person_detector.py
   scripts/person_follower.py
   scripts/body_tracker.py
+  scripts/jetson_camera.py
+  scripts/yolo_detector.py
+  scripts/gesture_detector.py
+  scripts/setup_models.py
   DESTINATION lib/${PROJECT_NAME}
 )
 

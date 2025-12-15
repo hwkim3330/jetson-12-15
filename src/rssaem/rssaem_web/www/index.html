@@ -779,7 +779,10 @@
                 const page = tab.dataset.page;
                 document.getElementById(`page-${page}`).classList.add('active');
                 currentPage = page;
-                setTimeout(resizeAll, 50);
+                setTimeout(() => {
+                    resizeAll();
+                    refreshJoysticks();
+                }, 100);
             });
         });
 
@@ -1276,16 +1279,28 @@
             toast('Run: ros2 run nav2_map_server map_saver_cli -f ~/map');
         }
 
-        // Joystick
+        // Joystick instances
+        let joystickInstances = {};
+
         function setupJoystick(zoneId, linearId, angularId, speedMult = 1) {
+            // Destroy existing instance if any
+            if (joystickInstances[zoneId]) {
+                joystickInstances[zoneId].destroy();
+            }
+
             const zone = document.getElementById(zoneId);
+            if (!zone) return;
+
             const joystick = nipplejs.create({
                 zone: zone,
                 mode: 'static',
                 position: { left: '50%', top: '50%' },
                 color: '#3b82f6',
-                size: 110
+                size: 110,
+                restOpacity: 0.7
             });
+
+            joystickInstances[zoneId] = joystick;
 
             joystick.on('move', (evt, data) => {
                 const force = Math.min(data.force, 2) / 2;
@@ -1304,6 +1319,17 @@
                 document.getElementById(linearId).textContent = '0.00';
                 document.getElementById(angularId).textContent = '0.00';
             });
+
+            return joystick;
+        }
+
+        function refreshJoysticks() {
+            // Recreate joysticks for current page
+            if (currentPage === 'teleop') {
+                setupJoystick('joystickZone', 'linearSpeed', 'angularSpeed');
+            } else if (currentPage === 'slam') {
+                setupJoystick('slamJoystickZone', 'slamLinear', 'slamAngular', 0.8);
+            }
         }
 
         function sendVelocity(linear, angular) {

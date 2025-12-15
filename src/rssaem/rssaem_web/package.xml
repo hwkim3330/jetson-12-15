@@ -12,6 +12,7 @@
   <exec_depend>rosbridge_server</exec_depend>
   <exec_depend>web_video_server</exec_depend>
   <exec_depend>rssaem_bringup</exec_depend>
+  <exec_depend>rssaem_ai</exec_depend>
 
   <export>
     <build_type>ament_cmake</build_type>
