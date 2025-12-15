@@ -523,7 +523,7 @@
             <div class="logo">
                 <img src="logo.png" alt="">
                 <h1>RSAEM</h1>
-                <span class="version">v1.3</span>
+                <span class="version">v1.5</span>
             </div>
             <div class="header-right">
                 <div class="toggles">
@@ -724,7 +724,7 @@
         document.addEventListener('touchmove', e => e.preventDefault(), { passive: false });
 
         // Version
-        const VERSION = '1.3';
+        const VERSION = '1.5';
 
         // State
         let ros, cmdVelPub;
@@ -827,8 +827,7 @@
             cam.classList.toggle('visible', cameraEnabled);
 
             if (cameraEnabled) {
-                const host = location.hostname || 'localhost';
-                img.src = `http://${host}:8080/stream?topic=/camera/image_raw&type=mjpeg&quality=40`;
+                img.src = `/stream?topic=/camera/image_raw&type=mjpeg&quality=40`;
                 toast('Camera enabled');
             } else {
                 img.src = '';
@@ -851,7 +850,11 @@
         // ROS Connection
         function connect() {
             const host = location.hostname || 'localhost';
-            ros = new ROSLIB.Ros({ url: `ws://${host}:9090` });
+            // Use nginx proxy for WebSocket (port 80) or direct connection (port 9090)
+            const wsUrl = location.port === '' || location.port === '80'
+                ? `ws://${host}/rosbridge`
+                : `ws://${host}:9090`;
+            ros = new ROSLIB.Ros({ url: wsUrl });
 
             ros.on('connection', () => {
                 document.getElementById('statusDot').classList.add('ok');
