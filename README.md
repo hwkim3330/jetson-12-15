@@ -1,6 +1,6 @@
 # RSAEM Robot - ROS2 Humble Workspace
 
-알쌤로봇 오린 나노 기본 버전 ROS2 워크스페이스
+알쌤로봇 오린 나노 ROS2 워크스페이스 (v1.5)
 
 ## 1. 스펙
 
@@ -8,220 +8,255 @@
 |------|------|
 | ROS2 | Humble |
 | Jetpack | 6.2 |
-| OpenCV | 4.8 |
-| 컴퓨터 | NVIDIA Orin Nano |
-| LiDAR | 2D LiDAR (12m 거리) |
+| TensorRT | 10.3.0 |
+| OpenCV | 4.5.4 |
+| 컴퓨터 | NVIDIA Orin Nano 8GB |
+| LiDAR | LDROBOT STL-19P (0.03-12m, 10Hz) |
 | 모터 | ROBOTIS Dynamixel |
-| 카메라 | 160도 어안카메라 |
+| 카메라 | 160도 어안카메라 (CSI) |
 | 배터리 | 8.4V Li-ion |
-| 통신 | USB, WiFi, UART, I2C, SPI |
 
-### 옵션
-- IMU
-- 오디오 기능 쉴드 보드
+### 하드웨어 가속기
 
-## 2. 주의사항
+| 가속기 | 용도 | 상태 |
+|--------|------|------|
+| CUDA | GPU 연산 | 활성 |
+| DLA | 딥러닝 추론 | 준비됨 |
+| nvvidconv | 비디오 변환 | 활성 |
+| NVJPG | JPEG 인코딩 | 준비됨 |
 
-1. **반드시 8.4V 어댑터로 충전** (판매 시 동봉)
-   - 지정된 규격 외 어댑터 사용 시 배터리/전원 시스템 손상 가능
+## 2. 빠른 시작
 
-2. **전원이 켜진 상태로 박스에 넣어 이동 금지** (쇼트 위험)
-
-3. **Pi 카메라 케이블 연결 상태 유지**
-   - 케이블이 느슨하거나 손상되면 카메라 동작 불가
-
-4. **USB 포트에 너무 많은 장치 연결 금지**
-
-5. **오린 나노 파워모드 15W 권장**
-   - 배터리 사용 시 안정적인 동작을 위해
-
-## 3. 빌드
+### 2.1 처음 설치
 
 ```bash
+# 1. 워크스페이스 클론
+git clone https://github.com/hwkim3330/jetson-12-15.git ~/rsaembot_ws
 cd ~/rsaembot_ws
-colcon build
-```
 
-### 환경 설정 (최초 1회)
+# 2. 의존성 설치
+sudo apt update
+sudo apt install -y ros-humble-rosbridge-server ros-humble-web-video-server nginx
 
-```bash
+# 3. 빌드
+source /opt/ros/humble/setup.bash
+colcon build --symlink-install
+
+# 4. 환경 설정
 echo "source ~/rsaembot_ws/install/setup.bash" >> ~/.bashrc
 echo "export LIDAR_MODEL=LDS-04" >> ~/.bashrc
 echo "export RSSAEM_MODEL=rssaem" >> ~/.bashrc
 source ~/.bashrc
+
+# 5. nginx 설정
+sudo cp config/nginx/rssaem.conf /etc/nginx/sites-available/
+sudo ln -sf /etc/nginx/sites-available/rssaem.conf /etc/nginx/sites-enabled/
+sudo rm -f /etc/nginx/sites-enabled/default
+./scripts/sync_www.sh
+sudo systemctl restart nginx
+sudo systemctl enable nginx
 ```
 
-## 4. 사용법
-
-### 4.1 로봇 Bringup (로컬)
+### 2.2 실행
 
 ```bash
-ros2 launch rssaem_bringup rssaem.launch.py
+# 웹 인터페이스 + 로봇 전체 실행
+ros2 launch rssaem_web web_interface.launch.py
 ```
 
-### 4.2 텔레옵 (키보드 조종)
+### 2.3 접속
 
-```bash
-# 다른 터미널에서
-ros2 run rssaem_teleop teleop_keyboard
+브라우저에서:
+```
+http://<로봇_IP>/
 ```
 
-> **팁**: 테스트 시 종이컵 위에 로봇을 올려놓고 바퀴 동작 확인
+예시: `http://10.10.10.213/`
 
-### 4.3 토픽 및 노드 확인
+## 3. 웹 인터페이스
+
+### 3.1 기능
+
+| 탭 | 기능 |
+|----|------|
+| Control | 조이스틱/키보드로 수동 조종 |
+| SLAM | 지도 생성 |
+| Navigate | 자율 주행 (탭해서 목표 설정) |
+| AI | 사람 따라가기, 색상 추적 |
+
+### 3.2 단축키
+
+| 키 | 동작 |
+|----|------|
+| W/S | 전진/후진 |
+| A/D | 좌회전/우회전 |
+| Space | 비상 정지 |
+
+### 3.3 서비스 포트
+
+| 포트 | 서비스 | 접근 |
+|------|--------|------|
+| 80 | nginx (웹) | http://IP/ |
+| 8080 | 카메라 스트림 | http://IP/stream |
+| 9090 | WebSocket | ws://IP/rosbridge |
+
+## 4. AI 기능
+
+### 4.1 사용 가능한 AI 노드
 
 ```bash
-ros2 topic list
-rqt_graph
+# 사람 감지 (MobileNet-SSD)
+ros2 run rssaem_ai person_detector.py
+
+# YOLOv8 물체 감지 (TensorRT)
+ros2 run rssaem_ai yolo_detector.py
+
+# 제스처 인식 (MediaPipe)
+ros2 run rssaem_ai gesture_detector.py
+
+# 색상 추적
+ros2 run rssaem_ai body_tracker.py
 ```
 
-### 4.4 RViz2 시각화
+### 4.2 모델 설정
 
 ```bash
-ros2 launch rssaem_bringup rviz2.launch.py
+# AI 모델 다운로드 및 TensorRT 변환
+ros2 run rssaem_ai setup_models.py --all
 ```
 
-## 5. 원격 제어 (PC에서)
+### 4.3 제스처 명령어
 
-### 5.1 PC 환경 설정
+| 제스처 | 동작 |
+|--------|------|
+| 손바닥 | 정지 |
+| 주먹 | 전진 |
+| 왼쪽 가리키기 | 좌회전 |
+| 오른쪽 가리키기 | 우회전 |
+| 엄지척 | 팔로우 모드 |
 
-```bash
-# ~/.bashrc에 추가 (ROS_DOMAIN_ID는 로봇과 동일하게)
-export ROS_DOMAIN_ID=30
-```
-
-### 5.2 로봇에 SSH 접속 후 Bringup
-
-```bash
-ssh nvidia@<로봇_IP>
-# 예: ssh nvidia@192.168.100.99
-
-ros2 launch rssaem_bringup rssaem.launch.py
-```
-
-### 5.3 PC에서 텔레옵 실행
+## 5. SLAM (지도 생성)
 
 ```bash
-ros2 run rssaem_teleop teleop_keyboard
-```
-
-## 6. SLAM (지도 생성)
-
-### 6.1 실행
-
-```bash
-# 터미널 1: 로봇 Bringup (SSH)
-ros2 launch rssaem_bringup rssaem.launch.py
+# 터미널 1: 로봇 + 웹
+ros2 launch rssaem_web web_interface.launch.py
 
 # 터미널 2: Cartographer
 ros2 launch rssaem_cartographer cartographer.launch.py
 
-# 터미널 3: 텔레옵으로 로봇 이동
-ros2 run rssaem_teleop teleop_keyboard
-```
-
-> **팁**: 로봇 속도 0.3 이하로 천천히 이동해야 깨끗한 지도 생성 가능
-
-### 6.2 지도 저장
-
-```bash
+# 웹에서 SLAM 탭으로 이동하여 조종
+# 지도 완성 후 저장:
 ros2 run nav2_map_server map_saver_cli -f ~/map
 ```
 
-## 7. Navigation2 (자율 주행)
-
-### 7.1 실행
+## 6. Navigation (자율 주행)
 
 ```bash
-# 터미널 1: 로봇 Bringup (SSH)
-ros2 launch rssaem_bringup rssaem.launch.py
-
-# 터미널 2: Navigation2
+# 저장된 지도로 네비게이션 실행
 ros2 launch rssaem_navigation2 navigation2.launch.py map:=$HOME/map.yaml
 ```
 
-> **중요**: SLAM 때 사용한 시작 위치와 방향에 로봇을 배치
+웹 인터페이스 Navigate 탭에서 목표 지점 터치
 
-### 7.2 목표 지점 설정
+## 7. 오프라인 모드 (WiFi 핫스팟)
 
-RViz2에서 `Nav2 Goal` 버튼으로 목표 지점 클릭
-
-## 8. 웹 인터페이스 (Tesla Style)
-
-부팅 시 자동으로 웹 서버가 시작됩니다.
-
-### 8.1 접속 방법
-
-브라우저에서 다음 주소로 접속:
-```
-http://<로봇_IP>:8888
-```
-
-### 8.2 기능
-
-- **LiDAR 시각화**: 실시간 2D LiDAR 데이터 표시
-- **조이스틱 컨트롤**: 마우스/터치로 로봇 조종
-- **키보드 컨트롤**: W/A/S/D 또는 방향키
-- **SLAM 모드**: 지도 생성
-- **Navigation 모드**: 자율 주행
-- **비상 정지**: 즉시 정지 버튼
-
-### 8.3 수동 실행
+로봇이 자체 WiFi를 생성하여 인터넷 없이 작동:
 
 ```bash
-# 기본 웹 인터페이스
-ros2 launch rssaem_web web_interface.launch.py
+# 핫스팟 모드 활성화
+./scripts/enable_ap_mode.sh
 
-# SLAM + 웹 인터페이스
-ros2 launch rssaem_web slam_web.launch.py
-
-# Navigation + 웹 인터페이스
-ros2 launch rssaem_web nav_web.launch.py map:=$HOME/map.yaml
+# 클라이언트 모드로 복귀
+./scripts/enable_client_mode.sh
 ```
 
-### 8.4 포트 정보
+연결 정보:
+- SSID: `RSAEM_Robot`
+- 비밀번호: `rsaem1234`
+- IP: `192.168.4.1`
 
-| 포트 | 서비스 |
-|------|--------|
-| 8888 | 웹 인터페이스 |
-| 9090 | ROSBridge WebSocket |
-| 8080 | 비디오 스트리밍 |
+자세한 설정: [docs/WIFI_HOTSPOT_SETUP.md](docs/WIFI_HOTSPOT_SETUP.md)
 
-### 8.5 자동 시작 서비스 관리
-
-```bash
-# 서비스 상태 확인
-sudo systemctl status rssaem
-
-# 서비스 중지
-sudo systemctl stop rssaem
-
-# 서비스 시작
-sudo systemctl start rssaem
-
-# 자동 시작 비활성화
-sudo systemctl disable rssaem
-```
-
-## 9. 패키지 구조
+## 8. 패키지 구조
 
 ```
 rsaembot_ws/
+├── config/
+│   └── nginx/              # nginx 설정
+├── docs/
+│   ├── apriltag/           # AprilTag 인쇄용
+│   └── WIFI_HOTSPOT_SETUP.md
+├── scripts/
+│   ├── sync_www.sh         # 웹 파일 동기화
+│   ├── enable_ap_mode.sh   # WiFi AP 모드
+│   └── enable_client_mode.sh
 └── src/
-    ├── ldlidar_stl_ros2/     # LiDAR 드라이버
+    ├── ldlidar_stl_ros2/   # LiDAR 드라이버
     └── rssaem/
-        ├── rssaem/               # 메타 패키지
-        ├── rssaem_bringup/       # 런치 파일
-        ├── rssaem_cartographer/  # SLAM
-        ├── rssaem_description/   # URDF/모델
-        ├── rssaem_msgs/          # 커스텀 메시지
-        ├── rssaem_navigation2/   # 네비게이션
-        ├── rssaem_node/          # 하드웨어 인터페이스
-        ├── rssaem_teleop/        # 키보드 조종
-        ├── rssaem_web/           # 웹 인터페이스
-        └── rf2o_laser_odometry/  # 레이저 오도메트리
+        ├── rssaem_ai/          # AI 노드 (NEW)
+        ├── rssaem_bringup/     # 런치 파일
+        ├── rssaem_cartographer/ # SLAM
+        ├── rssaem_description/ # URDF
+        ├── rssaem_navigation2/ # 네비게이션
+        ├── rssaem_node/        # 하드웨어
+        ├── rssaem_teleop/      # 텔레옵
+        └── rssaem_web/         # 웹 인터페이스
 ```
 
-## 10. 문의
+## 9. 문제 해결
+
+### 웹 페이지가 안 열림
+
+```bash
+# nginx 상태 확인
+sudo systemctl status nginx
+
+# 웹 파일 동기화
+./scripts/sync_www.sh
+sudo systemctl restart nginx
+```
+
+### 카메라가 안 나옴
+
+```bash
+# 카메라 토픽 확인
+ros2 topic list | grep camera
+
+# 카메라 노드 재시작
+ros2 run rssaem_ai jetson_camera.py
+```
+
+### LiDAR 데이터 없음
+
+```bash
+# LiDAR 토픽 확인
+ros2 topic echo /scan --once
+
+# USB 연결 확인
+ls /dev/ttyUSB*
+```
+
+## 10. 주의사항
+
+1. **8.4V 어댑터로만 충전** (동봉된 것 사용)
+2. **전원 켠 상태로 박스 이동 금지**
+3. **파워모드 15W 권장** (배터리 사용 시)
+4. **Pi 카메라 케이블 연결 상태 확인**
+
+## 11. 업데이트 방법
+
+```bash
+cd ~/rsaembot_ws
+git pull
+colcon build --symlink-install
+./scripts/sync_www.sh
+```
+
+## 12. 라이선스
+
+Apache-2.0
+
+## 13. 문의
 
 - 제조사: 주식회사 젯슨에이아이
+- GitHub: https://github.com/hwkim3330/jetson-12-15
