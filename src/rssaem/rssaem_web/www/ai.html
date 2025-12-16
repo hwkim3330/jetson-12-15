@@ -21,8 +21,8 @@
             width: 100%;
             height: 100%;
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: #0f0f1a;
-            color: #fff;
+            background: #f0f2f5;
+            color: #1f2937;
         }
 
         .app {
@@ -36,9 +36,25 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 12px 16px;
-            background: rgba(255,255,255,0.05);
-            border-bottom: 1px solid rgba(255,255,255,0.1);
+            padding: 10px 16px;
+            background: #fff;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .logo img {
+            height: 28px;
+        }
+
+        .logo h1 {
+            font-size: 16px;
+            font-weight: 600;
+            color: #1f2937;
         }
 
         .back-btn {
@@ -46,21 +62,17 @@
             align-items: center;
             gap: 6px;
             padding: 8px 12px;
-            background: rgba(255,255,255,0.1);
-            border: none;
+            background: #f3f4f6;
+            border: 1px solid #e5e7eb;
             border-radius: 8px;
-            color: #fff;
+            color: #374151;
             font-size: 13px;
             font-weight: 500;
             text-decoration: none;
         }
 
-        .header h1 {
-            font-size: 18px;
-            font-weight: 600;
-            background: linear-gradient(135deg, #8b5cf6, #6366f1);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
+        .back-btn:active {
+            background: #e5e7eb;
         }
 
         .status {
@@ -68,7 +80,7 @@
             align-items: center;
             gap: 6px;
             font-size: 12px;
-            color: #9ca3af;
+            color: #6b7280;
         }
 
         .status-dot {
@@ -92,11 +104,12 @@
         .camera-view {
             flex: 1;
             margin: 12px;
-            background: #1a1a2e;
+            background: #1e293b;
             border-radius: 16px;
             overflow: hidden;
             position: relative;
             min-height: 200px;
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
         }
 
         .camera-view img {
@@ -110,25 +123,17 @@
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            color: rgba(255,255,255,0.3);
+            color: rgba(255,255,255,0.5);
             font-size: 14px;
             text-align: center;
-        }
-
-        .ai-overlay {
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            pointer-events: none;
         }
 
         .ai-label {
             position: absolute;
             top: 12px;
             left: 12px;
-            background: rgba(139, 92, 246, 0.9);
+            background: linear-gradient(135deg, #8b5cf6, #6366f1);
+            color: #fff;
             padding: 6px 12px;
             border-radius: 6px;
             font-size: 12px;
@@ -140,6 +145,7 @@
             top: 12px;
             right: 12px;
             background: rgba(0,0,0,0.6);
+            color: #fff;
             padding: 6px 12px;
             border-radius: 6px;
             font-size: 11px;
@@ -147,16 +153,16 @@
 
         /* Control Panel */
         .control-panel {
-            background: rgba(255,255,255,0.05);
-            border-top: 1px solid rgba(255,255,255,0.1);
+            background: #fff;
+            border-top: 1px solid #e5e7eb;
             padding: 16px;
         }
 
         /* AI Modes */
         .ai-modes {
             display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 12px;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
             margin-bottom: 16px;
         }
 
@@ -164,28 +170,28 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 8px;
-            padding: 16px;
-            background: rgba(255,255,255,0.05);
-            border: 2px solid rgba(255,255,255,0.1);
+            gap: 6px;
+            padding: 12px 8px;
+            background: #f9fafb;
+            border: 2px solid #e5e7eb;
             border-radius: 12px;
-            color: #9ca3af;
-            font-size: 12px;
+            color: #6b7280;
+            font-size: 11px;
             font-weight: 600;
             cursor: pointer;
             transition: all 0.2s;
         }
 
         .ai-btn svg {
-            width: 32px;
-            height: 32px;
+            width: 28px;
+            height: 28px;
             stroke: currentColor;
         }
 
         .ai-btn.active {
-            background: linear-gradient(135deg, rgba(139, 92, 246, 0.3), rgba(99, 102, 241, 0.3));
+            background: linear-gradient(135deg, rgba(139, 92, 246, 0.1), rgba(99, 102, 241, 0.1));
             border-color: #8b5cf6;
-            color: #fff;
+            color: #7c3aed;
         }
 
         .ai-btn:active {
@@ -194,7 +200,8 @@
 
         /* Status Info */
         .status-info {
-            background: rgba(255,255,255,0.05);
+            background: #f9fafb;
+            border: 1px solid #e5e7eb;
             border-radius: 10px;
             padding: 12px;
             margin-bottom: 16px;
@@ -204,7 +211,7 @@
             display: flex;
             justify-content: space-between;
             padding: 6px 0;
-            border-bottom: 1px solid rgba(255,255,255,0.05);
+            border-bottom: 1px solid #e5e7eb;
         }
 
         .status-row:last-child {
@@ -212,13 +219,14 @@
         }
 
         .status-label {
-            color: #9ca3af;
+            color: #6b7280;
             font-size: 12px;
         }
 
         .status-value {
             font-size: 12px;
             font-weight: 600;
+            color: #1f2937;
         }
 
         /* Emergency Button */
@@ -263,13 +271,17 @@
 <body>
     <div class="app">
         <header class="header">
+            <div class="logo">
+                <img src="logo.png" alt="">
+                <img src="keti.png" alt="" style="height: 24px; margin-left: 4px;">
+                <h1>RSSAEM AI</h1>
+            </div>
             <a href="index.html" class="back-btn">
-                <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
+                <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2">
                     <path d="M15 18l-6-6 6-6"/>
                 </svg>
                 Back
             </a>
-            <h1>AI Vision</h1>
             <div class="status">
                 <span class="status-dot" id="statusDot"></span>
                 <span id="statusText">...</span>
@@ -279,8 +291,7 @@
         <main class="main">
             <div class="camera-view">
                 <img id="cameraImg" src="" alt="AI Camera">
-                <div class="camera-placeholder" id="placeholder">Enable AI mode below</div>
-                <div class="ai-overlay" id="aiOverlay"></div>
+                <div class="camera-placeholder" id="placeholder">Select AI mode below</div>
                 <div class="ai-label" id="aiLabel">AI OFF</div>
                 <div class="ai-stats" id="aiStats">--</div>
             </div>
@@ -292,7 +303,7 @@
                             <circle cx="12" cy="7" r="4"/>
                             <path d="M5.5 21a7.5 7.5 0 0115 0"/>
                         </svg>
-                        Person Follow
+                        Follow
                     </button>
                     <button class="ai-btn" id="btnGesture" onclick="toggleGesture()">
                         <svg viewBox="0 0 24 24" fill="none" stroke-width="2">
@@ -309,14 +320,14 @@
                             <rect x="7" y="14" width="3" height="3"/>
                             <rect x="14" y="14" width="3" height="3"/>
                         </svg>
-                        Object Detect
+                        YOLO
                     </button>
                     <button class="ai-btn" id="btnColor" onclick="toggleColor()">
                         <svg viewBox="0 0 24 24" fill="none" stroke-width="2">
                             <circle cx="12" cy="12" r="10"/>
                             <circle cx="12" cy="12" r="4"/>
                         </svg>
-                        Color Track
+                        Color
                     </button>
                 </div>
 
@@ -386,13 +397,10 @@
                 ros, name: '/ai_mode', messageType: 'std_msgs/String'
             }).subscribe(msg => {
                 const mode = msg.data;
-                // Update UI based on actual running mode
                 if (mode !== 'none' && mode !== currentMode) {
-                    // Mode changed externally or process started
                     document.getElementById('aiStats').textContent = 'Running';
                 }
                 if (mode === 'none' && currentMode) {
-                    // Process stopped unexpectedly
                     document.getElementById('aiStats').textContent = 'Stopped';
                 }
             });
@@ -422,7 +430,6 @@
                 }
             });
 
-            // YOLO detections list
             new ROSLIB.Topic({
                 ros, name: '/detections', messageType: 'std_msgs/String'
             }).subscribe(msg => {
@@ -460,11 +467,9 @@
 
         // AI Mode toggles
         function setMode(mode, btnId) {
-            // Clear all
             document.querySelectorAll('.ai-btn').forEach(b => b.classList.remove('active'));
 
             if (currentMode === mode) {
-                // Turn off current mode
                 publishEnable(mode, false);
                 currentMode = null;
                 document.getElementById('aiLabel').textContent = 'AI OFF';
@@ -475,9 +480,7 @@
                 switchToNormalCamera();
                 toast(mode + ' OFF');
             } else {
-                // Turn off previous mode if any
                 if (currentMode) publishEnable(currentMode, false);
-                // Enable new mode
                 currentMode = mode;
                 document.getElementById(btnId).classList.add('active');
                 document.getElementById('aiLabel').textContent = mode.toUpperCase();
@@ -486,7 +489,6 @@
                 document.getElementById('targetValue').textContent = '--';
                 document.getElementById('distanceValue').textContent = '--';
                 publishEnable(mode, true);
-                // Switch to debug stream after a delay (let node start)
                 setTimeout(() => switchToDebugStream(mode), 2000);
                 toast(mode + ' ON');
             }
