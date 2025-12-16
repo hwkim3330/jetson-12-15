@@ -11,13 +11,13 @@ from launch_ros.actions import Node
 
 
 def generate_launch_description():
-    # Declare arguments
+    # Declare arguments - HD 16:9 defaults for Jetson Orin Nano
     width_arg = DeclareLaunchArgument(
-        'width', default_value='640',
+        'width', default_value='1280',
         description='Camera image width'
     )
     height_arg = DeclareLaunchArgument(
-        'height', default_value='480',
+        'height', default_value='720',
         description='Camera image height'
     )
     fps_arg = DeclareLaunchArgument(
@@ -29,7 +29,7 @@ def generate_launch_description():
         description='Camera sensor ID (0 for CSI, or /dev/videoX number)'
     )
     flip_method_arg = DeclareLaunchArgument(
-        'flip_method', default_value='0',
+        'flip_method', default_value='2',
         description='Flip method (0=none, 2=rotate180)'
     )
     use_v4l2_arg = DeclareLaunchArgument(

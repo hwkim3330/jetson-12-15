@@ -23,14 +23,14 @@ class JetsonCamera(Node):
     def __init__(self):
         super().__init__('jetson_camera')
 
-        # Parameters
-        self.declare_parameter('width', 640)
-        self.declare_parameter('height', 480)
+        # Parameters - Optimized for Jetson Orin Nano
+        self.declare_parameter('width', 1280)
+        self.declare_parameter('height', 720)  # HD 16:9 ratio
         self.declare_parameter('fps', 30)
         self.declare_parameter('sensor_id', 0)
-        self.declare_parameter('flip_method', 0)  # 0=none, 2=rotate180
+        self.declare_parameter('flip_method', 2)  # 0=none, 2=rotate180 (IMX219)
         self.declare_parameter('use_v4l2', False)  # Fallback to v4l2
-        self.declare_parameter('jpeg_quality', 75)  # JPEG quality for compressed
+        self.declare_parameter('jpeg_quality', 80)  # JPEG quality for compressed
 
         self.width = self.get_parameter('width').value
         self.height = self.get_parameter('height').value
@@ -45,11 +45,15 @@ class JetsonCamera(Node):
         self.running = True
         self.frame_count = 0
 
-        # Publishers
-        qos = QoSProfile(depth=1, reliability=ReliabilityPolicy.BEST_EFFORT)
-        self.image_pub = self.create_publisher(Image, '/camera/image_raw', qos)
+        # Publishers - Use RELIABLE QoS for web_video_server compatibility
+        qos_reliable = QoSProfile(depth=1, reliability=ReliabilityPolicy.RELIABLE)
+        qos_best_effort = QoSProfile(depth=1, reliability=ReliabilityPolicy.BEST_EFFORT)
+
+        # Main image uses RELIABLE for web_video_server
+        self.image_pub = self.create_publisher(Image, '/camera/image_raw', qos_reliable)
+        # Compressed uses BEST_EFFORT for lower latency
         self.compressed_pub = self.create_publisher(
-            CompressedImage, '/camera/image_raw/compressed', qos)
+            CompressedImage, '/camera/image_raw/compressed', qos_best_effort)
 
         # Initialize camera
         if not self._init_camera():

@@ -35,15 +35,15 @@ def generate_launch_description():
             )
         ),
 
-        # Include Jetson camera node
+        # Include Jetson camera node - HD 16:9 for Orin Nano
         IncludeLaunchDescription(
             PythonLaunchDescriptionSource(
                 os.path.join(rssaem_ai_dir, 'launch', 'camera.launch.py')
             ),
             launch_arguments={
-                'width': '640',
-                'height': '480',
-                'fps': '15',
+                'width': '1280',
+                'height': '720',
+                'fps': '30',
             }.items(),
         ),
 

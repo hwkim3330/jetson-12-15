@@ -245,13 +245,13 @@
             text-align: center;
         }
 
-        /* Camera View */
+        /* Camera View - HD 16:9 ratio */
         .camera-container {
             position: absolute;
             bottom: 10px;
             right: 10px;
-            width: 120px;
-            height: 90px;
+            width: 240px;
+            height: 135px;
             background: #000;
             border-radius: 8px;
             overflow: hidden;
@@ -556,11 +556,13 @@
                 <img src="keti.png" alt="" style="height: 24px; margin-left: 4px;">
                 <h1>RSSAEM</h1>
             </div>
+            <!-- Model buttons hidden until implemented
             <div class="model-btns">
                 <button class="model-btn" id="btnLoadYolo" onclick="loadModel('yolo')">YOLO</button>
                 <button class="model-btn" id="btnLoadPerson" onclick="loadModel('person')">Person</button>
                 <button class="model-btn" id="btnLoadGesture" onclick="loadModel('gesture')">Gesture</button>
             </div>
+            -->
             <div class="header-right">
                 <div class="toggles">
                     <button class="toggle-btn" id="toggleLidar" onclick="toggleLidar()">
@@ -591,7 +593,9 @@
             <button class="tab active" data-page="teleop">Control</button>
             <button class="tab" data-page="slam">SLAM</button>
             <button class="tab" data-page="nav">Navigate</button>
+            <!-- AI tab hidden until implemented
             <button class="tab" data-page="ai">AI</button>
+            -->
         </nav>
 
         <main class="main">
@@ -783,7 +787,7 @@
 
         const MAX_LINEAR = 0.26;
         const MAX_ANGULAR = 1.4;
-        const LIDAR_THROTTLE = 120;
+        const LIDAR_THROTTLE = 80; // Smoother rendering (12.5 FPS)
         const CMD_THROTTLE = 50; // Fast command rate
 
         // Canvas contexts
@@ -1012,6 +1016,20 @@
                     continuous: true
                 });
 
+                // Scale canvas to fit map when it changes
+                slamGridClient.on('change', function() {
+                    if (slamGridClient.currentGrid) {
+                        slamViewer.scaleToDimensions(
+                            slamGridClient.currentGrid.width,
+                            slamGridClient.currentGrid.height
+                        );
+                        slamViewer.shift(
+                            slamGridClient.currentGrid.pose.position.x,
+                            slamGridClient.currentGrid.pose.position.y
+                        );
+                    }
+                });
+
                 // Add robot marker
                 const slamRobot = new ROS2D.NavigationArrow({
                     size: 0.3,
@@ -1058,6 +1076,20 @@
                     ros: ros,
                     rootObject: navViewer.scene,
                     continuous: true
+                });
+
+                // Scale canvas to fit map when it changes
+                navGridClient.on('change', function() {
+                    if (navGridClient.currentGrid) {
+                        navViewer.scaleToDimensions(
+                            navGridClient.currentGrid.width,
+                            navGridClient.currentGrid.height
+                        );
+                        navViewer.shift(
+                            navGridClient.currentGrid.pose.position.x,
+                            navGridClient.currentGrid.pose.position.y
+                        );
+                    }
                 });
 
                 // Add robot marker
@@ -1108,7 +1140,11 @@
         function subscribeLidar() {
             if (lidarSub) return;
             lidarSub = new ROSLIB.Topic({
-                ros, name: '/scan', messageType: 'sensor_msgs/LaserScan'
+                ros,
+                name: '/scan',
+                messageType: 'sensor_msgs/LaserScan',
+                queue_length: 1,      // Best Effort: drop old messages
+                throttle_rate: 100    // 100ms throttle (10Hz max)
             });
             lidarSub.subscribe(onLidar);
         }
@@ -1120,62 +1156,82 @@
             }
         }
 
-        // LiDAR drawing with throttle
+        // LiDAR drawing with throttle and smooth rendering
+        let lidarPoints = []; // Store points for smooth rendering
+
         function onLidar(scan) {
             if (!lidarEnabled) return;
 
+            // Parse scan data (always update points)
+            const newPoints = [];
+            for (let i = 0; i < scan.ranges.length; i += 3) {
+                const r = scan.ranges[i];
+                if (r > scan.range_min && r < scan.range_max && r < 12) {
+                    const a = scan.angle_min + i * scan.angle_increment;
+                    newPoints.push({
+                        x: r * Math.cos(a - Math.PI/2),
+                        y: r * Math.sin(a - Math.PI/2)
+                    });
+                }
+            }
+            lidarPoints = newPoints;
+
+            // Throttle rendering
             const now = Date.now();
             if (now - lastLidarDraw < LIDAR_THROTTLE) return;
             lastLidarDraw = now;
 
+            drawLidar();
+        }
+
+        function drawLidar() {
             const canvas = currentPage === 'slam' ? slamCanvas : lidarCanvas;
-            if (canvas.width === 0) return;
+            if (canvas.width === 0 || !lidarPoints.length) return;
 
             const ctx = canvas.getContext('2d');
-            ctx.fillStyle = '#1e293b';
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
-
             const cx = canvas.width / 2;
             const cy = canvas.height / 2;
             const scale = Math.min(canvas.width, canvas.height) / 24;
 
-            // Grid
-            ctx.strokeStyle = 'rgba(100,150,200,0.1)';
+            // Clear with background
+            ctx.fillStyle = '#1e293b';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            // Grid (subtle)
+            ctx.strokeStyle = 'rgba(100,150,200,0.08)';
+            ctx.lineWidth = 1;
             for (let r = 2; r <= 12; r += 2) {
                 ctx.beginPath();
                 ctx.arc(cx, cy, r * scale, 0, Math.PI * 2);
                 ctx.stroke();
             }
 
-            // Points (sample every 4th point for performance)
-            let count = 0;
+            // Draw all points at once (batch rendering)
             ctx.fillStyle = '#4ade80';
-            for (let i = 0; i < scan.ranges.length; i += 4) {
-                const r = scan.ranges[i];
-                if (r > scan.range_min && r < scan.range_max) {
-                    const a = scan.angle_min + i * scan.angle_increment;
-                    ctx.beginPath();
-                    ctx.arc(cx + r * scale * Math.cos(a - Math.PI/2),
-                            cy + r * scale * Math.sin(a - Math.PI/2), 2, 0, Math.PI * 2);
-                    ctx.fill();
-                    count++;
-                }
-            }
-
-            // Robot
-            ctx.fillStyle = '#3b82f6';
             ctx.beginPath();
-            ctx.arc(cx, cy, 6, 0, Math.PI * 2);
+            for (const p of lidarPoints) {
+                const px = cx + p.x * scale;
+                const py = cy + p.y * scale;
+                ctx.moveTo(px + 1.5, py);
+                ctx.arc(px, py, 1.5, 0, Math.PI * 2);
+            }
             ctx.fill();
 
+            // Robot marker
+            ctx.fillStyle = '#3b82f6';
+            ctx.beginPath();
+            ctx.arc(cx, cy, 5, 0, Math.PI * 2);
+            ctx.fill();
+
+            // Direction indicator
             ctx.strokeStyle = '#3b82f6';
             ctx.lineWidth = 2;
             ctx.beginPath();
             ctx.moveTo(cx, cy);
-            ctx.lineTo(cx, cy - 15);
+            ctx.lineTo(cx, cy - 12);
             ctx.stroke();
 
-            document.getElementById('pointCount').textContent = count * 4;
+            document.getElementById('pointCount').textContent = lidarPoints.length;
         }
 
         // Odometry
