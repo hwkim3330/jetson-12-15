@@ -4,7 +4,7 @@
 
 set -e
 
-SRC="/home/nvidia/rssaembot_ws/install/rssaem_web/share/rssaem_web/www"
+SRC="/home/nvidia/rsaembot_ws/install/rssaem_web/share/rssaem_web/www"
 DST="/var/www/rssaem"
 
 echo "Syncing web files..."

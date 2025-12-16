@@ -3,8 +3,8 @@
 Gesture Detector Node for RSSAEM Robot
 Uses MediaPipe or OpenCV for hand gesture recognition
 Commands robot based on hand gestures:
-- Open palm: Stop
-- Fist: Move forward
+- Open palm: Move forward
+- Fist: Stop
 - Point left: Turn left
 - Point right: Turn right
 - Thumbs up: Follow mode
@@ -292,10 +292,10 @@ class GestureDetector(Node):
         """Control robot based on gesture"""
         cmd = Twist()
 
-        if gesture == "open_palm":
+        if gesture == "fist":
             # Stop
             pass
-        elif gesture == "fist":
+        elif gesture == "open_palm":
             cmd.linear.x = self.linear_speed
         elif gesture == "point_left" or gesture == "left":
             cmd.angular.z = self.angular_speed

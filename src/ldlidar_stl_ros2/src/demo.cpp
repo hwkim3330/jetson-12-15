@@ -106,9 +106,12 @@ int main(int argc, char **argv) {
     exit(EXIT_FAILURE);
   }
 
-  // create ldlidar data topic and publisher
-  rclcpp::Publisher<sensor_msgs::msg::LaserScan>::SharedPtr publisher = 
-      node->create_publisher<sensor_msgs::msg::LaserScan>(topic_name, 10);
+  // create ldlidar data topic and publisher with BEST_EFFORT QoS for real-time performance
+  rclcpp::QoS qos_profile(10);
+  qos_profile.reliability(rclcpp::ReliabilityPolicy::BestEffort);
+  qos_profile.durability(rclcpp::DurabilityPolicy::Volatile);
+  rclcpp::Publisher<sensor_msgs::msg::LaserScan>::SharedPtr publisher =
+      node->create_publisher<sensor_msgs::msg::LaserScan>(topic_name, qos_profile);
   
   rclcpp::WallRate r(10); //10hz
 

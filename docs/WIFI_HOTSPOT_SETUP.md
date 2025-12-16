@@ -64,7 +64,7 @@ macaddr_acl=0
 auth_algs=1
 ignore_broadcast_ssid=0
 wpa=2
-wpa_passphrase=rsaem1234
+wpa_passphrase=12345678
 wpa_key_mgmt=WPA-PSK
 wpa_pairwise=TKIP
 rsn_pairwise=CCMP
@@ -106,7 +106,7 @@ sudo reboot
 
 1. 스마트폰/노트북에서 WiFi 검색
 2. **RSSAEM_Robot** 네트워크 연결
-3. 비밀번호: `rsaem1234`
+3. 비밀번호: `12345678`
 4. 브라우저에서 접속:
    - http://192.168.4.1/
    - http://rsaem.local/ (mDNS 지원 시)
@@ -117,7 +117,7 @@ sudo reboot
 
 ```bash
 #!/bin/bash
-# /home/nvidia/rssaembot_ws/scripts/enable_ap_mode.sh
+# /home/nvidia/rsaembot_ws/scripts/enable_ap_mode.sh
 
 sudo systemctl stop NetworkManager
 sudo systemctl start hostapd
@@ -130,7 +130,7 @@ echo "Connect to: http://192.168.4.1/"
 
 ```bash
 #!/bin/bash
-# /home/nvidia/rssaembot_ws/scripts/enable_client_mode.sh
+# /home/nvidia/rsaembot_ws/scripts/enable_client_mode.sh
 
 sudo systemctl stop hostapd
 sudo systemctl stop dnsmasq
@@ -149,7 +149,7 @@ sudo nano /etc/rc.local
 #!/bin/bash
 # Start robot services
 source /opt/ros/humble/setup.bash
-source /home/nvidia/rssaembot_ws/install/setup.bash
+source /home/nvidia/rsaembot_ws/install/setup.bash
 export LIDAR_MODEL=LDS-04
 export RSSAEM_MODEL=rssaem
 
