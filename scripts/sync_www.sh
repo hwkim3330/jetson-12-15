@@ -4,8 +4,8 @@
 
 set -e
 
-SRC="/home/nvidia/rsaembot_ws/install/rssaem_web/share/rssaem_web/www"
-DST="/var/www/rssaem"
+SRC="/home/nvidia/ros2_ws/install/robot_web/share/robot_web/www"
+DST="/var/www/robot"
 
 echo "Syncing web files..."
 sudo rm -rf "$DST"

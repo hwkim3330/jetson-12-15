@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>RSSAEM Robot - ROS2 Web Interface</title>
+    <title>KETI Robot - ROS2 Web Interface</title>
     <style>
         * {
             margin: 0;
@@ -393,8 +393,8 @@
 </head>
 <body>
     <div class="hero">
-        <img src="logo.png" alt="RSSAEM Robot">
-        <h1>RSSAEM Robot</h1>
+        <img src="logo.png" alt="KETI Robot">
+        <h1>KETI Robot</h1>
         <p>ROS2 Humble 기반 웹 인터페이스로 로봇을 제어하세요. SLAM, Navigation, 실시간 LiDAR 시각화를 브라우저에서 바로 사용할 수 있습니다.</p>
 
         <div class="badges">
@@ -425,7 +425,7 @@
                         <div class="ui-header">
                             <div class="ui-logo">
                                 <img src="logo.png" alt="Logo">
-                                <span>RSSAEM Robot</span>
+                                <span>KETI Robot</span>
                             </div>
                             <div class="ui-status">
                                 <div class="ui-dot green"></div>
@@ -527,11 +527,11 @@
                 <h2>Quick Start</h2>
                 <div class="code-block">
 <span class="comment"># Build the workspace</span>
-<span class="cmd">cd ~/rsaembot_ws</span>
+<span class="cmd">cd ~/ros2_ws</span>
 <span class="cmd">colcon build</span>
 
 <span class="comment"># Launch robot + web interface</span>
-<span class="cmd">ros2 launch rssaem_web web_interface.launch.py</span>
+<span class="cmd">ros2 launch robot_web web_interface.launch.py</span>
 
 <span class="comment"># Access in browser</span>
 <span class="cmd">http://&lt;ROBOT_IP&gt;:8888</span>
@@ -563,7 +563,7 @@
         </div>
 
         <footer>
-            <p>RSSAEM Robot - Made by JetsonAI</p>
+            <p>KETI Robot - Made by JetsonAI</p>
         </footer>
     </div>
 </body>

@@ -54,7 +54,7 @@ ros2 launch apriltag_ros apriltag_node.launch.py
 
 ## Cartographer Integration
 
-Enable landmarks in `rssaem_lds_2d.lua`:
+Enable landmarks in `robot_lds_2d.lua`:
 ```lua
 options.use_landmarks = true
 ```

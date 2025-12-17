@@ -1,0 +1,18 @@
+[Unit]
+Description=KETI Robot ROS2 Service
+After=network.target
+
+[Service]
+Type=simple
+User=nvidia
+Group=nvidia
+WorkingDirectory=/home/nvidia/ros2_ws
+ExecStart=/home/nvidia/ros2_ws/scripts/start_robot.sh
+ExecStop=/bin/bash -c 'pkill -f ros2'
+Restart=on-failure
+RestartSec=5
+StandardOutput=journal
+StandardError=journal
+
+[Install]
+WantedBy=multi-user.target

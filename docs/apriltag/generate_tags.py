@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-AprilTag SVG Generator for RSSAEM Robot
+AprilTag SVG Generator for KETI Robot
 Generates printable AprilTag images in SVG format
 
 Usage:

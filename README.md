@@ -1,4 +1,4 @@
-# RSSAEM Robot
+# KETI Robot
 
 [![ROS2](https://img.shields.io/badge/ROS2-Humble-blue?logo=ros)](https://docs.ros.org/en/humble/)
 [![Platform](https://img.shields.io/badge/Platform-Jetson_Orin_Nano-green?logo=nvidia)](https://developer.nvidia.com/embedded/jetson-orin-nano)
@@ -6,7 +6,7 @@
 [![Python](https://img.shields.io/badge/Python-3.10-yellow?logo=python)](https://www.python.org/)
 [![TensorRT](https://img.shields.io/badge/TensorRT-10.3.0-76B900?logo=nvidia)](https://developer.nvidia.com/tensorrt)
 
-> **알쌤로봇** - NVIDIA Jetson Orin Nano 기반 ROS2 교육용 로봇 플랫폼
+> **KETI Robot** - NVIDIA Jetson Orin Nano 기반 ROS2 자율주행 로봇 플랫폼
 
 ---
 
@@ -15,8 +15,8 @@
 - **Web Interface** - Tesla-style 반응형 웹 UI (모바일/데스크톱)
 - **SLAM** - Cartographer 기반 실시간 지도 생성
 - **Navigation** - Nav2 자율 주행
-- **AI Vision** - YOLOv8, 사람 감지, 제스처 인식
-- **Hardware Acceleration** - CUDA, TensorRT, DLA 지원
+- **AI Vision** - YOLOv8 TensorRT, 사람 감지, 제스처 인식
+- **Hardware Acceleration** - CUDA, TensorRT, DLA, NVJPG 지원
 
 ---
 
@@ -24,13 +24,12 @@
 
 | Component | Specification |
 |-----------|---------------|
-| Computer | NVIDIA Jetson Orin Nano 8GB |
+| Computer | NVIDIA Jetson Orin Nano Super 8GB |
 | OS | JetPack 6.2 (Ubuntu 22.04) |
 | ROS | ROS2 Humble |
-| LiDAR | LDROBOT STL-19P (0.03-12m, 10Hz) |
-| Motor | ROBOTIS Dynamixel |
-| Camera | 160° Fisheye (CSI) |
-| Battery | 8.4V Li-ion |
+| LiDAR | LDRobot LD19 (0.03-12m, 10Hz) |
+| Motor | DC Motor with Encoder |
+| Camera | CSI Camera (IMX219) |
 
 ### Hardware Accelerators
 
@@ -45,62 +44,40 @@
 
 ## Quick Start
 
-### Installation (One-line)
+### Installation
 
 ```bash
 # Clone and install
-git clone https://github.com/hwkim3330/jetson-12-15.git ~/rsaembot_ws
-cd ~/rsaembot_ws && ./scripts/install.sh
-```
-
-### Manual Installation
-
-```bash
-# Clone repository
-git clone https://github.com/hwkim3330/jetson-12-15.git ~/rsaembot_ws
-cd ~/rsaembot_ws
-
-# Install dependencies
-sudo apt update
-sudo apt install -y ros-humble-rosbridge-server ros-humble-web-video-server
-
-# Build
-source /opt/ros/humble/setup.bash
-colcon build --symlink-install
-
-# Environment setup
-echo "source ~/rsaembot_ws/install/setup.bash" >> ~/.bashrc
-echo "export LIDAR_MODEL=LDS-04" >> ~/.bashrc
-echo "export RSSAEM_MODEL=rssaem" >> ~/.bashrc
-source ~/.bashrc
+git clone https://github.com/hwkim3330/jetson-12-15.git ~/ros2_ws
+cd ~/ros2_ws
+chmod +x scripts/install.sh
+./scripts/install.sh
 ```
 
 ### Autostart Service
 
 ```bash
-# Install service (auto-start on boot)
-sudo cp rssaem.service /etc/systemd/system/
-sudo systemctl daemon-reload
-sudo systemctl enable rssaem
-sudo systemctl start rssaem
+# Enable auto-start on boot
+sudo systemctl enable robot
+sudo systemctl start robot
 
 # Service commands
-sudo systemctl status rssaem   # Check status
-sudo systemctl stop rssaem     # Stop
-sudo systemctl restart rssaem  # Restart
-tail -f ~/rsaembot_ws/autostart.log  # View logs
+sudo systemctl status robot   # Check status
+sudo systemctl stop robot     # Stop
+sudo systemctl restart robot  # Restart
+journalctl -u robot -f        # View logs
 ```
 
 ### Manual Launch
 
 ```bash
-ros2 launch rssaem_web web_interface.launch.py
+source ~/ros2_ws/install/setup.bash
+ros2 launch robot_bringup robot.launch.py
 ```
 
 ### Access
 
-1. Connect to robot WiFi: **RSSAEM_Robot** (password: `12345678`)
-2. Open browser: **http://192.168.10.1:8888/**
+Open browser: **http://<ROBOT_IP>:8888/**
 
 ---
 
@@ -129,7 +106,6 @@ ros2 launch rssaem_web web_interface.launch.py
 |------|---------|
 | 8888 | Web Interface |
 | 9090 | WebSocket (rosbridge) |
-| 8080 | Camera Stream (MJPEG) |
 
 ---
 
@@ -138,17 +114,17 @@ ros2 launch rssaem_web web_interface.launch.py
 ### Available AI Nodes
 
 ```bash
-# Person Detection (MobileNet-SSD)
-ros2 run rssaem_ai person_detector.py
-
 # YOLOv8 Object Detection (TensorRT)
-ros2 run rssaem_ai yolo_detector.py
+ros2 run robot_ai yolo_detector.py
 
-# Gesture Recognition (MediaPipe)
-ros2 run rssaem_ai gesture_detector.py
+# Person Detection
+ros2 run robot_ai person_detector.py
 
-# Body Tracking
-ros2 run rssaem_ai body_tracker.py
+# Gesture Recognition
+ros2 run robot_ai gesture_detector.py
+
+# Person Following
+ros2 run robot_ai person_follower.py
 ```
 
 ### Gesture Commands
@@ -166,11 +142,8 @@ ros2 run rssaem_ai body_tracker.py
 ## SLAM (Mapping)
 
 ```bash
-# Terminal 1: Robot + Web
-ros2 launch rssaem_web web_interface.launch.py
-
-# Terminal 2: Cartographer
-ros2 launch rssaem_cartographer cartographer.launch.py
+# Launch SLAM
+ros2 launch robot_slam cartographer.launch.py
 
 # Save map
 ros2 run nav2_map_server map_saver_cli -f ~/map
@@ -181,59 +154,50 @@ ros2 run nav2_map_server map_saver_cli -f ~/map
 ## Navigation
 
 ```bash
-ros2 launch rssaem_navigation2 navigation2.launch.py map:=$HOME/map.yaml
+ros2 launch robot_navigation navigation.launch.py map:=$HOME/map.yaml
 ```
 
 Use Navigate tab to set destination by tapping on the map.
 
 ---
 
-## WiFi (Default: AP Mode)
-
-Robot creates its own WiFi network (default on boot):
-
-| Property | Value |
-|----------|-------|
-| SSID | `RSSAEM_Robot` |
-| Password | `12345678` |
-| IP | `192.168.10.1` |
-| Web UI | http://192.168.10.1:8888/ |
-
-```bash
-# Switch between modes
-./scripts/enable_ap_mode.sh      # AP mode (default)
-./scripts/enable_client_mode.sh  # Connect to external WiFi
-```
-
-See [docs/WIFI_HOTSPOT_SETUP.md](docs/WIFI_HOTSPOT_SETUP.md) for detailed setup.
-
----
-
 ## Package Structure
 
 ```
-rsaembot_ws/
+ros2_ws/
 ├── config/
-│   └── nginx/              # nginx config (optional)
-├── docs/
-│   ├── apriltag/           # AprilTag printables
-│   └── WIFI_HOTSPOT_SETUP.md
+│   ├── robot.service      # systemd service
+│   └── nginx/             # nginx config (optional)
 ├── scripts/
-│   ├── sync_www.sh         # Web file sync
-│   ├── enable_ap_mode.sh   # WiFi AP mode
-│   └── enable_client_mode.sh
+│   ├── install.sh         # Installation script
+│   ├── start_robot.sh     # Start script
+│   ├── stop_robot.sh      # Stop script
+│   └── sync_www.sh        # Web file sync
 └── src/
-    ├── ldlidar_stl_ros2/   # LiDAR driver
-    └── rssaem/
-        ├── rssaem_ai/          # AI nodes (TensorRT)
-        ├── rssaem_bringup/     # Launch files
-        ├── rssaem_cartographer/ # SLAM
-        ├── rssaem_description/ # URDF
-        ├── rssaem_navigation2/ # Navigation
-        ├── rssaem_node/        # Hardware interface
-        ├── rssaem_teleop/      # Teleoperation
-        └── rssaem_web/         # Web interface
+    ├── ldlidar_stl_ros2/  # LiDAR driver
+    └── keti/
+        ├── robot_ai/          # AI nodes (TensorRT)
+        ├── robot_bringup/     # Launch files
+        ├── robot_driver/      # Motor driver
+        ├── robot_description/ # URDF
+        ├── robot_navigation/  # Nav2 config
+        ├── robot_slam/        # SLAM config
+        ├── robot_teleop/      # Teleoperation
+        ├── robot_web/         # Web interface
+        └── robot_msgs/        # Custom messages
 ```
+
+---
+
+## ROS2 Topics
+
+| Topic | Type | Description |
+|-------|------|-------------|
+| `/cmd_vel` | geometry_msgs/Twist | Velocity command |
+| `/scan` | sensor_msgs/LaserScan | LiDAR scan |
+| `/odom` | nav_msgs/Odometry | Odometry |
+| `/camera/image_raw` | sensor_msgs/Image | Camera image |
+| `/map` | nav_msgs/OccupancyGrid | SLAM map |
 
 ---
 
@@ -241,47 +205,28 @@ rsaembot_ws/
 
 ### Web page not loading
 ```bash
-# Check if services are running
 ros2 topic list
-
-# Restart web interface
-pkill -f web_interface
-ros2 launch rssaem_web web_interface.launch.py
+sudo systemctl restart robot
 ```
 
 ### Camera not showing
 ```bash
-# Check camera topic
 ros2 topic list | grep camera
-
-# Restart camera node
-ros2 run rssaem_ai jetson_camera.py
+ros2 run robot_ai jetson_camera.py
 ```
 
 ### LiDAR not working
 ```bash
-# Check scan topic
 ros2 topic echo /scan --once
-
-# Check USB connection
 ls /dev/ttyUSB*
 ```
-
----
-
-## Safety Notes
-
-1. **Use only 8.4V adapter** for charging (included)
-2. **Do not move robot while powered on**
-3. **Use 15W power mode** when on battery
-4. **Check Pi camera ribbon cable** connection
 
 ---
 
 ## Update
 
 ```bash
-cd ~/rsaembot_ws
+cd ~/ros2_ws
 git pull
 colcon build --symlink-install
 ```
@@ -296,5 +241,4 @@ Apache-2.0
 
 ## Contact
 
-- **Manufacturer**: JetsonAI Co., Ltd.
 - **GitHub**: https://github.com/hwkim3330/jetson-12-15

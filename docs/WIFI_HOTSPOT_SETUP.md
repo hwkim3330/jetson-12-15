@@ -89,8 +89,8 @@ sudo nano /etc/dnsmasq.conf
 ```ini
 interface=wlan0
 dhcp-range=192.168.4.2,192.168.4.20,255.255.255.0,24h
-domain=rsaem.local
-address=/rsaem.local/192.168.4.1
+domain=robot.local
+address=/robot.local/192.168.4.1
 ```
 
 ### 5. 서비스 활성화
@@ -109,7 +109,7 @@ sudo reboot
 3. 비밀번호: `12345678`
 4. 브라우저에서 접속:
    - http://192.168.4.1/
-   - http://rsaem.local/ (mDNS 지원 시)
+   - http://robot.local/ (mDNS 지원 시)
 
 ## 모드 전환 스크립트
 
@@ -117,7 +117,7 @@ sudo reboot
 
 ```bash
 #!/bin/bash
-# /home/nvidia/rsaembot_ws/scripts/enable_ap_mode.sh
+# /home/nvidia/ros2_ws/scripts/enable_ap_mode.sh
 
 sudo systemctl stop NetworkManager
 sudo systemctl start hostapd
@@ -130,7 +130,7 @@ echo "Connect to: http://192.168.4.1/"
 
 ```bash
 #!/bin/bash
-# /home/nvidia/rsaembot_ws/scripts/enable_client_mode.sh
+# /home/nvidia/ros2_ws/scripts/enable_client_mode.sh
 
 sudo systemctl stop hostapd
 sudo systemctl stop dnsmasq
@@ -149,12 +149,12 @@ sudo nano /etc/rc.local
 #!/bin/bash
 # Start robot services
 source /opt/ros/humble/setup.bash
-source /home/nvidia/rsaembot_ws/install/setup.bash
+source /home/nvidia/ros2_ws/install/setup.bash
 export LIDAR_MODEL=LDS-04
-export RSSAEM_MODEL=rssaem
+export RSSAEM_MODEL=robot
 
 # Start ROS2 launch in background
-ros2 launch rssaem_web web_interface.launch.py &
+ros2 launch robot_web web_interface.launch.py &
 
 exit 0
 ```
@@ -184,7 +184,7 @@ sudo rfkill unblock wifi
 ### mDNS 설정 (선택)
 ```bash
 sudo apt install avahi-daemon
-# rsaem.local 자동 해석
+# robot.local 자동 해석
 ```
 
 ## 네트워크 구성도

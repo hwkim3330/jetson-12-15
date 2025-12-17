@@ -1,5 +1,5 @@
 #!/bin/bash
-# RSSAEM Robot Installation Script
+# KETI Robot Installation Script
 # Installs dependencies, builds workspace, and enables autostart service
 
 set -e
@@ -8,7 +8,7 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 WS_DIR="$(dirname "$SCRIPT_DIR")"
 
 echo "==================================="
-echo "  RSSAEM Robot Installation"
+echo "  KETI Robot Installation"
 echo "==================================="
 echo "Workspace: $WS_DIR"
 echo ""
@@ -23,10 +23,10 @@ echo "[1/5] Installing ROS2 dependencies..."
 sudo apt update
 sudo apt install -y \
     ros-humble-rosbridge-server \
-    ros-humble-web-video-server \
     ros-humble-tf2-ros \
     ros-humble-nav2-bringup \
     ros-humble-cartographer-ros \
+    ros-humble-slam-toolbox \
     ros-humble-robot-localization \
     python3-opencv \
     python3-pip
@@ -39,22 +39,21 @@ colcon build --symlink-install
 
 # Step 3: Setup environment
 echo "[3/5] Setting up environment..."
-if ! grep -q "rsaembot_ws" ~/.bashrc; then
+if ! grep -q "ros2_ws/install/setup.bash" ~/.bashrc; then
     echo "" >> ~/.bashrc
-    echo "# RSSAEM Robot" >> ~/.bashrc
-    echo "source ~/rsaembot_ws/install/setup.bash" >> ~/.bashrc
-    echo "export LIDAR_MODEL=LDS-04" >> ~/.bashrc
-    echo "export RSSAEM_MODEL=rssaem" >> ~/.bashrc
+    echo "# KETI Robot" >> ~/.bashrc
+    echo "source ~/ros2_ws/install/setup.bash" >> ~/.bashrc
+    echo "export LIDAR_MODEL=LD19" >> ~/.bashrc
     echo "export ROS_DOMAIN_ID=30" >> ~/.bashrc
 fi
 
 # Step 4: Install systemd service
 echo "[4/5] Installing systemd service..."
-chmod +x "$WS_DIR/rssaem_autostart.sh"
-sudo cp "$WS_DIR/rssaem.service" /etc/systemd/system/
+chmod +x "$WS_DIR/scripts/start_robot.sh"
+sudo cp "$WS_DIR/config/robot.service" /etc/systemd/system/
 sudo systemctl daemon-reload
-sudo systemctl enable rssaem.service
-echo "  Service enabled: rssaem.service"
+sudo systemctl enable robot.service
+echo "  Service enabled: robot.service"
 
 # Step 5: Sync web files
 echo "[5/5] Syncing web files..."
@@ -69,14 +68,14 @@ echo "  Installation Complete!"
 echo "==================================="
 echo ""
 echo "Commands:"
-echo "  Start now:    sudo systemctl start rssaem"
-echo "  Stop:         sudo systemctl stop rssaem"
-echo "  Status:       sudo systemctl status rssaem"
-echo "  Logs:         tail -f ~/rsaembot_ws/autostart.log"
+echo "  Start now:    sudo systemctl start robot"
+echo "  Stop:         sudo systemctl stop robot"
+echo "  Status:       sudo systemctl status robot"
+echo "  Logs:         journalctl -u robot -f"
 echo ""
 echo "Access:"
-echo "  Web UI:       http://192.168.10.1:8888/"
+echo "  Web UI:       http://<ROBOT_IP>:8888/"
 echo ""
 echo "Reboot to auto-start, or run:"
-echo "  sudo systemctl start rssaem"
+echo "  sudo systemctl start robot"
 echo ""
