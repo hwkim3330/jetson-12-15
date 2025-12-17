@@ -35,8 +35,8 @@ chmod -R 755 "$WEB_DST"
 echo "Configuring nginx..."
 cat > "$NGINX_CONF" << 'EOF'
 server {
-    listen 80 default_server;
-    listen [::]:80 default_server;
+    listen 8888 default_server;
+    listen [::]:8888 default_server;
 
     root /var/www/robot;
     index index.html;
@@ -88,8 +88,8 @@ echo ""
 echo "=== Web Server Setup Complete ==="
 echo ""
 echo "Access the web interface at:"
-echo "  http://10.42.0.1/ (AP mode)"
-echo "  http://$(hostname -I | awk '{print $1}')/ (current IP)"
+echo "  http://192.168.10.1:8888/"
+echo "  http://$(hostname -I | awk '{print $1}'):8888/"
 echo ""
 echo "Make sure to also run:"
 echo "  - rosbridge: ros2 launch rosbridge_server rosbridge_websocket_launch.xml"

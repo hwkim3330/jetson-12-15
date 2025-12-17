@@ -46,7 +46,7 @@ ros2 run web_video_server web_video_server 2>/dev/null &
 
 echo ""
 echo "=== KETI Robot System Started ==="
-echo "Web Interface: http://10.42.0.1/"
+echo "Web Interface: http://192.168.10.1:8888/"
 echo ""
 
 # Keep running
