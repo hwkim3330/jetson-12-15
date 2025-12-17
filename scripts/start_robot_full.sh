@@ -1,6 +1,6 @@
 #!/bin/bash
 # KETI Robot Full System Start Script
-# Starts: robot base, rosbridge, camera
+# Starts: rosbridge, robot base, camera+AI, web_video_server
 
 set -e
 
@@ -15,37 +15,39 @@ export LIDAR_MODEL=LD19
 source /opt/ros/humble/setup.bash
 source /home/nvidia/ros2_ws/install/setup.bash
 
-# Wait for system to be ready
-sleep 3
+# Wait for system
+sleep 5
 
-echo "Starting KETI Robot Full System..."
+echo "=== Starting KETI Robot Full System ==="
+echo "Time: $(date)"
 
-# Start rosbridge in background
-echo "Starting rosbridge..."
-ros2 launch rosbridge_server rosbridge_websocket_launch.xml &
-ROSBRIDGE_PID=$!
+# Kill any existing ROS processes
+pkill -f "ros2" 2>/dev/null || true
 sleep 2
 
-# Start robot base
-echo "Starting robot base..."
-ros2 launch robot_bringup robot.launch.py &
-ROBOT_PID=$!
+# 1. Start rosbridge (for web interface)
+echo "[1/4] Starting rosbridge..."
+ros2 launch rosbridge_server rosbridge_websocket_launch.xml &
 sleep 3
 
-# Start camera (optional)
-echo "Starting camera..."
-ros2 run robot_ai jetson_camera_hw.py &
-CAMERA_PID=$!
+# 2. Start robot base (LiDAR, motors, odometry)
+echo "[2/4] Starting robot base..."
+ros2 launch robot_bringup robot.launch.py &
+sleep 5
 
-echo "All services started"
-echo "  Rosbridge PID: $ROSBRIDGE_PID"
-echo "  Robot PID: $ROBOT_PID"
-echo "  Camera PID: $CAMERA_PID"
+# 3. Start camera + AI pipeline
+echo "[3/4] Starting camera + AI..."
+ros2 run robot_ai camera_ai_pipeline.py &
+sleep 2
 
-# Wait for any process to exit
-wait -n $ROSBRIDGE_PID $ROBOT_PID
+# 4. Start web_video_server (if available)
+echo "[4/4] Starting video server..."
+ros2 run web_video_server web_video_server 2>/dev/null &
 
-# If we get here, something crashed - exit to trigger restart
-echo "Process exited, shutting down..."
-kill $ROSBRIDGE_PID $ROBOT_PID $CAMERA_PID 2>/dev/null || true
-exit 1
+echo ""
+echo "=== KETI Robot System Started ==="
+echo "Web Interface: http://10.42.0.1/"
+echo ""
+
+# Keep running
+wait
