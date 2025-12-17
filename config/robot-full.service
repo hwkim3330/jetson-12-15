@@ -1,0 +1,25 @@
+[Unit]
+Description=KETI Robot Full System (ROS2 + Rosbridge + Camera)
+After=network.target nginx.service
+Wants=nginx.service
+
+[Service]
+Type=simple
+User=nvidia
+Group=nvidia
+WorkingDirectory=/home/nvidia/ros2_ws
+Environment="HOME=/home/nvidia"
+Environment="USER=nvidia"
+Environment="ROS_DOMAIN_ID=30"
+Environment="KETI_MODEL=burger"
+Environment="LDS_MODEL=LDS-04"
+Environment="LIDAR_MODEL=LD19"
+ExecStart=/home/nvidia/ros2_ws/scripts/start_robot_full.sh
+ExecStop=/home/nvidia/ros2_ws/scripts/stop_robot.sh
+Restart=on-failure
+RestartSec=5
+StandardOutput=journal
+StandardError=journal
+
+[Install]
+WantedBy=multi-user.target

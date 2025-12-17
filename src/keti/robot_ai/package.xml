@@ -3,7 +3,7 @@
 <package format="3">
   <name>robot_ai</name>
   <version>1.0.0</version>
-  <description>AI features for RSSAEM robot using Jetson hardware acceleration</description>
+  <description>AI features for KETI robot using Jetson hardware acceleration</description>
   <maintainer email="user@example.com">nvidia</maintainer>
   <license>Apache-2.0</license>
 

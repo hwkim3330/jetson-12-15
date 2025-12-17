@@ -1,4 +1,4 @@
-// Copyright 2025 Jetsonai CO., LTD.
+// Copyright 2025 KETI
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -21,7 +21,7 @@
 
 void help_print()
 {
-  printf("For rssaem node : \n");
+  printf("For robot node : \n");
   printf("robot_driver [-i usb_port] [-h]\n");
   printf("options:\n");
   printf("-h : Print this help function.\n");
@@ -49,13 +49,13 @@ int main(int argc, char * argv[])
 
   rclcpp::executors::SingleThreadedExecutor executor;
 
-  auto rssaem = std::make_shared<jetsonai::robot::RSsaem>(usb_port);
+  auto robot = std::make_shared<keti::robot::Robot>(usb_port);
   auto diff_drive_controller =
-    std::make_shared<jetsonai::robot::DiffDriveController>(
-    rssaem->get_wheels()->separation,
-    rssaem->get_wheels()->radius);
+    std::make_shared<keti::robot::DiffDriveController>(
+    robot->get_wheels()->separation,
+    robot->get_wheels()->radius);
 
-  executor.add_node(rssaem);
+  executor.add_node(robot);
   executor.add_node(diff_drive_controller);
   executor.spin();
 

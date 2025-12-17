@@ -1,4 +1,4 @@
-# AprilTag for RSSAEM Robot
+# AprilTag for KETI Robot
 
 AprilTag is a visual fiduciary marker system useful for robot localization and navigation.
 

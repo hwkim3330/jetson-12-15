@@ -1,4 +1,4 @@
-// Copyright 2025 Jetsonai CO., LTD.
+// Copyright 2025 KETI
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -13,7 +13,7 @@
 
 #include <stdlib.h>
 
-namespace jetsonai
+namespace keti
 {
 namespace robot
 {
@@ -103,6 +103,6 @@ typedef struct
 
 const ControlTable extern_control_table;
 }  // namespace robot
-}  // namespace jetsonai
+}  // namespace keti
 
 #endif  // KETI_NODE__CONTROL_TABLE_HPP_

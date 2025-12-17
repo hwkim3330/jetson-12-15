@@ -3,7 +3,7 @@
 <package format="3">
   <name>robot_web</name>
   <version>1.0.0</version>
-  <description>RSSAEM Robot Web Interface - Tesla Style</description>
+  <description>KETI Robot Web Interface - Tesla Style</description>
   <maintainer email="hwkim3330@users.noreply.github.com">hwkim3330</maintainer>
   <license>Apache-2.0</license>
 

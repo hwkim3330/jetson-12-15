@@ -6,9 +6,9 @@
   <description>
     robot driver node that include diff drive controller, odometry and tf node
   </description>
-  <maintainer email="jetsonai@jetsonai.co.kr">Jetsonai</maintainer>
+  <maintainer email="keti@keti.re.kr">KETI</maintainer>
   <license>Apache 2.0</license>
-  <url type="website">http://jetsonai.co.kr</url>
+  <url type="website">http://keti.co.kr</url>
   <author email="kate.brighteyes@gmail.com">Kate</author>
   <buildtool_depend>ament_cmake</buildtool_depend>
   <depend>dynamixel_sdk</depend>

@@ -1,4 +1,4 @@
-// Copyright 2025 Jetsonai CO., LTD.
+// Copyright 2025 KETI
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -18,7 +18,7 @@
 
 #include "robot_driver/sensors/sensors.hpp"
 
-namespace jetsonai
+namespace keti
 {
 namespace robot
 {
@@ -51,5 +51,5 @@ private:
 };
 }  // namespace sensors
 }  // namespace robot
-}  // namespace jetsonai
+}  // namespace keti
 #endif  // KETI_NODE__SENSORS__SENSOR_STATE_HPP_

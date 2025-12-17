@@ -1,4 +1,4 @@
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-Changelog for package rssaem
+Changelog for package robot
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 

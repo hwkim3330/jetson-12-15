@@ -5,6 +5,8 @@
 export HOME=/home/nvidia
 export USER=nvidia
 export ROS_DOMAIN_ID=30
+export KETI_MODEL=burger
+export LDS_MODEL=LDS-04
 export LIDAR_MODEL=LD19
 
 # Source ROS2

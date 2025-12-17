@@ -1,5 +1,5 @@
 #!/bin/bash
-# Enable WiFi AP Mode for RSSAEM Robot
+# Enable WiFi AP Mode for KETI Robot
 # Creates WiFi hotspot for offline operation
 
 set -e
@@ -25,7 +25,7 @@ echo ""
 echo "====================================="
 echo "  AP Mode Enabled!"
 echo "====================================="
-echo "  SSID: RSSAEM_Robot"
+echo "  SSID: KETI_Robot"
 echo "  Password: 12345678"
 echo "  IP: 192.168.4.1"
 echo ""

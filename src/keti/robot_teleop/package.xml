@@ -6,9 +6,9 @@
   <description>
     Teleoperation node using keyboard for robot.
   </description>
-  <maintainer email="jetsonai@jetsonai.co.kr">Jetsonai</maintainer>
+  <maintainer email="keti@keti.re.kr">KETI</maintainer>
   <license>Apache 2.0</license>
-  <url type="website">http://jetsonai.co.kr</url>
+  <url type="website">http://keti.co.kr</url>
   <author email="kate.brighteyes@gmail.com">Kate</author>
   <exec_depend>geometry_msgs</exec_depend>
   <exec_depend>rclpy</exec_depend>

@@ -1,4 +1,4 @@
-// Copyright 2025 Jetsonai CO., LTD.
+// Copyright 2025 KETI
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -44,12 +44,12 @@
 #include "robot_driver/sensors/sensors.hpp"
 #include "robot_driver/twist_subscriber.hpp"
 
-namespace jetsonai
+namespace keti
 {
 namespace robot
 {
 extern const ControlTable extern_control_table;
-class RSsaem : public rclcpp::Node
+class Robot : public rclcpp::Node
 {
 public:
   typedef struct
@@ -64,8 +64,8 @@ public:
     float profile_acceleration;
   } Motors;
 
-  explicit RSsaem(const std::string & usb_port);
-  virtual ~RSsaem() {}
+  explicit Robot(const std::string & usb_port);
+  virtual ~Robot() {}
 
   Wheels * get_wheels();
   Motors * get_motors();
@@ -108,5 +108,5 @@ private:
   rclcpp::Subscription<rcl_interfaces::msg::ParameterEvent>::SharedPtr parameter_event_sub_;
 };
 }  // namespace robot
-}  // namespace jetsonai
+}  // namespace keti
 #endif  // KETI_NODE__KETI_HPP_

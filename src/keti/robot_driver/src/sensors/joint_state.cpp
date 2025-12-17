@@ -1,4 +1,4 @@
-// Copyright 2025 Jetsonai CO., LTD.
+// Copyright 2025 KETI
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -16,9 +16,9 @@
 
 #include "robot_driver/sensors/joint_state.hpp"
 
-using jetsonai::robot::sensors::JointState;
+using keti::robot::sensors::JointState;
 
-static std::array<int32_t, jetsonai::robot::sensors::JOINT_NUM> last_diff_position,
+static std::array<int32_t, keti::robot::sensors::JOINT_NUM> last_diff_position,
   last_position;
 
 JointState::JointState(

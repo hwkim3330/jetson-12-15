@@ -1,4 +1,4 @@
-# RSSAEM Robot WiFi Hotspot Setup
+# KETI Robot WiFi Hotspot Setup
 
 로봇이 인터넷 없이 독립적으로 작동할 수 있도록 WiFi 핫스팟 모드를 설정합니다.
 
@@ -56,7 +56,7 @@ sudo nano /etc/hostapd/hostapd.conf
 ```ini
 interface=wlan0
 driver=nl80211
-ssid=RSSAEM_Robot
+ssid=KETI_Robot
 hw_mode=g
 channel=7
 wmm_enabled=0
@@ -105,7 +105,7 @@ sudo reboot
 ## 접속 방법
 
 1. 스마트폰/노트북에서 WiFi 검색
-2. **RSSAEM_Robot** 네트워크 연결
+2. **KETI_Robot** 네트워크 연결
 3. 비밀번호: `12345678`
 4. 브라우저에서 접속:
    - http://192.168.4.1/
@@ -122,7 +122,7 @@ sudo reboot
 sudo systemctl stop NetworkManager
 sudo systemctl start hostapd
 sudo systemctl start dnsmasq
-echo "AP Mode enabled: SSID=RSSAEM_Robot"
+echo "AP Mode enabled: SSID=KETI_Robot"
 echo "Connect to: http://192.168.4.1/"
 ```
 
@@ -151,7 +151,7 @@ sudo nano /etc/rc.local
 source /opt/ros/humble/setup.bash
 source /home/nvidia/ros2_ws/install/setup.bash
 export LIDAR_MODEL=LDS-04
-export RSSAEM_MODEL=robot
+export KETI_MODEL=robot
 
 # Start ROS2 launch in background
 ros2 launch robot_web web_interface.launch.py &
@@ -191,10 +191,10 @@ sudo apt install avahi-daemon
 
 ```
 ┌─────────────────────────────────────────────────┐
-│                  RSSAEM Robot                    │
+│                  KETI Robot                    │
 │  ┌───────────────────────────────────────────┐  │
 │  │  wlan0 (AP Mode)                          │  │
-│  │  SSID: RSSAEM_Robot                       │  │
+│  │  SSID: KETI_Robot                       │  │
 │  │  IP: 192.168.4.1                          │  │
 │  └───────────────────────────────────────────┘  │
 │                      │                          │

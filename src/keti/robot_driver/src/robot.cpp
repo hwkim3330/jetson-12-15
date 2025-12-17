@@ -1,4 +1,4 @@
-// Copyright 2025 Jetsonai CO., LTD.
+// Copyright 2025 KETI
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -13,13 +13,13 @@
 #include <memory>
 #include <string>
 
-using jetsonai::robot::RSsaem;
+using keti::robot::Robot;
 using namespace std::chrono_literals;
 
-RSsaem::RSsaem(const std::string & usb_port)
+Robot::Robot(const std::string & usb_port)
 : Node("robot_driver", rclcpp::NodeOptions().use_intra_process_comms(true))
 {
-  RCLCPP_INFO(get_logger(), "Init RSsaem Node Main");
+  RCLCPP_INFO(get_logger(), "Init Robot Node Main");
   node_handle_ = std::shared_ptr<::rclcpp::Node>(this, [](::rclcpp::Node *) {});
 
   init_dynamixel_sdk_wrapper(usb_port);
@@ -33,17 +33,17 @@ RSsaem::RSsaem(const std::string & usb_port)
   run();
 }
 
-RSsaem::Wheels * RSsaem::get_wheels()
+Robot::Wheels * Robot::get_wheels()
 {
   return &wheels_;
 }
 
-RSsaem::Motors * RSsaem::get_motors()
+Robot::Motors * Robot::get_motors()
 {
   return &motors_;
 }
 
-void RSsaem::init_dynamixel_sdk_wrapper(const std::string & usb_port)
+void Robot::init_dynamixel_sdk_wrapper(const std::string & usb_port)
 {
   DynamixelSDKWrapper::Device opencr = {usb_port, 200, 1000000, 2.0f};
   //DynamixelSDKWrapper::Device opencr = {usb_port, 200, 57600, 2.0f};
@@ -100,7 +100,7 @@ void RSsaem::init_dynamixel_sdk_wrapper(const std::string & usb_port)
 
 }
 
-void RSsaem::check_device_status()
+void Robot::check_device_status()
 {
   RCLCPP_INFO(this->get_logger(), "check_device_status-is_connected_to_device");
   if (dxl_sdk_wrapper_->is_connected_to_device()) {
@@ -139,7 +139,7 @@ void RSsaem::check_device_status()
   }
 }
 
-void RSsaem::add_motors()
+void Robot::add_motors()
 {
   RCLCPP_INFO(this->get_logger(), "Add Motors");
 
@@ -157,7 +157,7 @@ void RSsaem::add_motors()
     0.0);
 }
 
-void RSsaem::add_wheels()
+void Robot::add_wheels()
 {
   RCLCPP_INFO(this->get_logger(), "Add Wheels");
 
@@ -168,7 +168,7 @@ void RSsaem::add_wheels()
   this->get_parameter_or<float>("wheels.radius", wheels_.radius, 0.021); //42mm
 }
 
-void RSsaem::add_sensors()
+void Robot::add_sensors()
 {
   RCLCPP_INFO(this->get_logger(), "Add Sensors");
 /* //SEN
@@ -238,7 +238,7 @@ void RSsaem::add_sensors()
       */
 }
 
-void RSsaem::add_devices()
+void Robot::add_devices()
 {
   RCLCPP_INFO(this->get_logger(), "Add Devices");
   devices_["motor_power"] =
@@ -251,7 +251,7 @@ void RSsaem::add_devices()
 	*/
 }
 
-void RSsaem::run()
+void Robot::run()
 {
   RCLCPP_INFO(this->get_logger(), "Run!");
 
@@ -262,7 +262,7 @@ void RSsaem::run()
   cmd_vel_callback();
 }
 
-void RSsaem::publish_timer(const std::chrono::milliseconds timeout)
+void Robot::publish_timer(const std::chrono::milliseconds timeout)
 {
   publish_timer_ = this->create_wall_timer(
     timeout,
@@ -280,7 +280,7 @@ void RSsaem::publish_timer(const std::chrono::milliseconds timeout)
   );
 }
 
-void RSsaem::heartbeat_timer(const std::chrono::milliseconds timeout)
+void Robot::heartbeat_timer(const std::chrono::milliseconds timeout)
 {
   heartbeat_timer_ = this->create_wall_timer(
     timeout,
@@ -303,7 +303,7 @@ void RSsaem::heartbeat_timer(const std::chrono::milliseconds timeout)
 }
 
 
-void RSsaem::parameter_event_callback()
+void Robot::parameter_event_callback()
 {
   priv_parameters_client_ = std::make_shared<rclcpp::AsyncParametersClient>(this);
   while (!priv_parameters_client_->wait_for_service(std::chrono::seconds(1))) {
@@ -363,7 +363,7 @@ void RSsaem::parameter_event_callback()
   parameter_event_sub_ = priv_parameters_client_->on_parameter_event(param_event_callback);
 }
 
-void RSsaem::cmd_vel_callback()
+void Robot::cmd_vel_callback()
 {
   auto qos = rclcpp::QoS(rclcpp::KeepLast(10));
   cmd_vel_sub_ = std::make_unique<TwistSubscriber>(

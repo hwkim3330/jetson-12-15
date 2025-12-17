@@ -1,4 +1,4 @@
-// Copyright 2025 Jetsonai CO., LTD.
+// Copyright 2025 KETI
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -29,7 +29,7 @@
 #include <sensor_msgs/msg/joint_state.hpp>
 
 
-namespace jetsonai
+namespace keti
 {
 namespace robot
 {
@@ -91,5 +91,5 @@ private:
   std::array<double, 3> robot_vel_;
 };
 }  // namespace robot
-}  // namespace jetsonai
+}  // namespace keti
 #endif  // KETI_NODE__ODOMETRY_HPP_

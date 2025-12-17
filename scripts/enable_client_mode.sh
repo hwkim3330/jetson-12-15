@@ -1,5 +1,5 @@
 #!/bin/bash
-# Enable WiFi Client Mode for RSSAEM Robot
+# Enable WiFi Client Mode for KETI Robot
 # Connects to existing WiFi network
 
 set -e

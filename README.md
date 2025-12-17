@@ -12,7 +12,7 @@
 
 ## Features
 
-- **Web Interface** - Tesla-style 반응형 웹 UI (모바일/데스크톱)
+- **Web Interface** - Modern 반응형 웹 UI (모바일/데스크톱)
 - **SLAM** - Cartographer 기반 실시간 지도 생성
 - **Navigation** - Nav2 자율 주행
 - **AI Vision** - YOLOv8 TensorRT, 사람 감지, 제스처 인식

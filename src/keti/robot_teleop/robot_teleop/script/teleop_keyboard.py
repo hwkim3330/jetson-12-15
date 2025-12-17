@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #
-# Copyright 2025 Jetsonai CO., LTD.
+# Copyright 2025 KETI
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -39,7 +39,7 @@ ANG_VEL_STEP_SIZE = 0.1
 KETI_MODEL = os.environ['KETI_MODEL']
 
 msg = """
-Control Your Rssaem Bot!
+Control Your Keti Bot!
 ---------------------------
 Moving around:
         w

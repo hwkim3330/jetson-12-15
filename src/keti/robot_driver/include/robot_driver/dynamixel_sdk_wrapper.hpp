@@ -1,4 +1,4 @@
-// Copyright 2025 Jetsonai CO., LTD.
+// Copyright 2025 KETI
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -31,7 +31,7 @@
 
 #define READ_DATA_SIZE 200
 
-namespace jetsonai
+namespace keti
 {
 namespace robot
 {
@@ -134,5 +134,5 @@ private:
   std::mutex write_data_mutex_;
 };
 }  // namespace robot
-}  // namespace jetsonai
+}  // namespace keti
 #endif  // KETI_NODE__DYNAMIXEL_SDK_WRAPPER_HPP_

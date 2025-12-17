@@ -1,4 +1,4 @@
-// Copyright 2025 Jetsonai CO., LTD.
+// Copyright 2025 KETI
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@
 #include <string>
 #include <utility>
 
-using jetsonai::robot::Odometry;
+using keti::robot::Odometry;
 using namespace std::chrono_literals;
 
 Odometry::Odometry(

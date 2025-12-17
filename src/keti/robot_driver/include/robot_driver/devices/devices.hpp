@@ -1,4 +1,4 @@
-// Copyright 2025 Jetsonai CO., LTD.
+// Copyright 2025 KETI
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -21,7 +21,7 @@
 #include "robot_driver/dynamixel_sdk_wrapper.hpp"
 
 
-namespace jetsonai
+namespace keti
 {
 namespace robot
 {
@@ -48,5 +48,5 @@ protected:
 };
 }  // namespace devices
 }  // namespace robot
-}  // namespace jetsonai
+}  // namespace keti
 #endif  // KETI_NODE__DEVICES__DEVICES_HPP_

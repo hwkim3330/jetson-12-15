@@ -15,6 +15,10 @@ install(PROGRAMS
   scripts/person_follower.py
   scripts/body_tracker.py
   scripts/jetson_camera.py
+  scripts/jetson_camera_hw.py
+  scripts/jetson_camera_zero_copy.py
+  scripts/camera_ai_pipeline.py
+  scripts/multi_ai_engine.py
   scripts/yolo_detector.py
   scripts/gesture_detector.py
   scripts/setup_models.py

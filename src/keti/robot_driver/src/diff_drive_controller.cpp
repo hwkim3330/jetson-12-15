@@ -1,4 +1,4 @@
-// Copyright 2025 Jetsonai CO., LTD.
+// Copyright 2025 KETI
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -12,7 +12,7 @@
 
 #include <memory>
 
-using jetsonai::robot::DiffDriveController;
+using keti::robot::DiffDriveController;
 
 DiffDriveController::DiffDriveController(const float wheel_seperation, const float wheel_radius)
 : Node("diff_drive_controller", rclcpp::NodeOptions().use_intra_process_comms(true))

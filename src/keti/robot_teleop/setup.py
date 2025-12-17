@@ -16,7 +16,7 @@ setup(
     ],
     zip_safe=True,
     maintainer='Kate',
-    maintainer_email='jetsonai@jetsonai.co.kr',
+    maintainer_email='keti@keti.re.kr',
     keywords=['ROS'],
     classifiers=[
         'Intended Audience :: Developers',
