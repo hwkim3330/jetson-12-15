@@ -8,12 +8,12 @@
 //
 // Authors:Kate Kim
 
-#include "rssaem_node/devices/motor_power.hpp"
+#include "robot_driver/devices/motor_power.hpp"
 
 #include <memory>
 #include <string>
 
-using jetsonai::rssaem::devices::MotorPower;
+using jetsonai::robot::devices::MotorPower;
 
 MotorPower::MotorPower(
   std::shared_ptr<rclcpp::Node> & nh,

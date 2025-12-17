@@ -8,16 +8,16 @@
 //
 // Authors:Kate Kim
 
-#include "rssaem_node/rssaem.hpp"
+#include "robot_driver/robot.hpp"
 
 #include <memory>
 #include <string>
 
-using jetsonai::rssaem::RSsaem;
+using jetsonai::robot::RSsaem;
 using namespace std::chrono_literals;
 
 RSsaem::RSsaem(const std::string & usb_port)
-: Node("rssaem_node", rclcpp::NodeOptions().use_intra_process_comms(true))
+: Node("robot_driver", rclcpp::NodeOptions().use_intra_process_comms(true))
 {
   RCLCPP_INFO(get_logger(), "Init RSsaem Node Main");
   node_handle_ = std::shared_ptr<::rclcpp::Node>(this, [](::rclcpp::Node *) {});

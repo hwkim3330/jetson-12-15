@@ -31,7 +31,7 @@
 
 namespace jetsonai
 {
-namespace rssaem
+namespace robot
 {
 class Odometry
 {
@@ -90,6 +90,6 @@ private:
   std::array<double, 3> robot_pose_;
   std::array<double, 3> robot_vel_;
 };
-}  // namespace rssaem
+}  // namespace robot
 }  // namespace jetsonai
 #endif  // KETI_NODE__ODOMETRY_HPP_

@@ -15,7 +15,7 @@
 
 namespace jetsonai
 {
-namespace rssaem
+namespace robot
 {
 constexpr uint8_t EEPROM = 1;
 constexpr uint8_t RAM = 2;
@@ -102,7 +102,7 @@ typedef struct
 } ControlTable;
 
 const ControlTable extern_control_table;
-}  // namespace rssaem
+}  // namespace robot
 }  // namespace jetsonai
 
 #endif  // KETI_NODE__CONTROL_TABLE_HPP_

@@ -28,25 +28,25 @@
 #include <sensor_msgs/msg/battery_state.hpp>
 //IMU #include <sensor_msgs/msg/imu.hpp>
 #include <sensor_msgs/msg/joint_state.hpp>
-#include <rssaem_msgs/msg/sensor_state.hpp>
+#include <robot_msgs/msg/sensor_state.hpp>
 
-#include "rssaem_node/control_table.hpp"
-#include "rssaem_node/devices/devices.hpp"
-#include "rssaem_node/devices/motor_power.hpp"
-#include "rssaem_node/devices/reset.hpp"
-#include "rssaem_node/devices/sound.hpp"
-#include "rssaem_node/dynamixel_sdk_wrapper.hpp"
-#include "rssaem_node/odometry.hpp"
-#include "rssaem_node/sensors/battery_state.hpp"
-//IMU #include "rssaem_node/sensors/imu.hpp"
-#include "rssaem_node/sensors/joint_state.hpp"
-#include "rssaem_node/sensors/sensor_state.hpp"
-#include "rssaem_node/sensors/sensors.hpp"
-#include "rssaem_node/twist_subscriber.hpp"
+#include "robot_driver/control_table.hpp"
+#include "robot_driver/devices/devices.hpp"
+#include "robot_driver/devices/motor_power.hpp"
+#include "robot_driver/devices/reset.hpp"
+#include "robot_driver/devices/sound.hpp"
+#include "robot_driver/dynamixel_sdk_wrapper.hpp"
+#include "robot_driver/odometry.hpp"
+#include "robot_driver/sensors/battery_state.hpp"
+//IMU #include "robot_driver/sensors/imu.hpp"
+#include "robot_driver/sensors/joint_state.hpp"
+#include "robot_driver/sensors/sensor_state.hpp"
+#include "robot_driver/sensors/sensors.hpp"
+#include "robot_driver/twist_subscriber.hpp"
 
 namespace jetsonai
 {
-namespace rssaem
+namespace robot
 {
 extern const ControlTable extern_control_table;
 class RSsaem : public rclcpp::Node
@@ -107,6 +107,6 @@ private:
   rclcpp::AsyncParametersClient::SharedPtr priv_parameters_client_;
   rclcpp::Subscription<rcl_interfaces::msg::ParameterEvent>::SharedPtr parameter_event_sub_;
 };
-}  // namespace rssaem
+}  // namespace robot
 }  // namespace jetsonai
 #endif  // KETI_NODE__KETI_HPP_

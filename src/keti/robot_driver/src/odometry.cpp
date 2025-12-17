@@ -8,13 +8,13 @@
 //
 // Authors:Kate Kim
 
-#include "rssaem_node/odometry.hpp"
+#include "robot_driver/odometry.hpp"
 
 #include <memory>
 #include <string>
 #include <utility>
 
-using jetsonai::rssaem::Odometry;
+using jetsonai::robot::Odometry;
 using namespace std::chrono_literals;
 
 Odometry::Odometry(

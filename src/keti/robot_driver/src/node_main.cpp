@@ -16,13 +16,13 @@
 
 #include <rclcpp/rclcpp.hpp>
 
-#include "rssaem_node/diff_drive_controller.hpp"
-#include "rssaem_node/rssaem.hpp"
+#include "robot_driver/diff_drive_controller.hpp"
+#include "robot_driver/robot.hpp"
 
 void help_print()
 {
   printf("For rssaem node : \n");
-  printf("rssaem_node [-i usb_port] [-h]\n");
+  printf("robot_driver [-i usb_port] [-h]\n");
   printf("options:\n");
   printf("-h : Print this help function.\n");
   printf("-i usb_port: Connected USB port with OpenCR.");
@@ -49,9 +49,9 @@ int main(int argc, char * argv[])
 
   rclcpp::executors::SingleThreadedExecutor executor;
 
-  auto rssaem = std::make_shared<jetsonai::rssaem::RSsaem>(usb_port);
+  auto rssaem = std::make_shared<jetsonai::robot::RSsaem>(usb_port);
   auto diff_drive_controller =
-    std::make_shared<jetsonai::rssaem::DiffDriveController>(
+    std::make_shared<jetsonai::robot::DiffDriveController>(
     rssaem->get_wheels()->separation,
     rssaem->get_wheels()->radius);
 

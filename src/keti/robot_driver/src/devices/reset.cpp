@@ -8,12 +8,12 @@
 //
 // Authors:Kate Kim
 
-#include "rssaem_node/devices/reset.hpp"
+#include "robot_driver/devices/reset.hpp"
 
 #include <memory>
 #include <string>
 
-using jetsonai::rssaem::devices::Reset;
+using jetsonai::robot::devices::Reset;
 
 Reset::Reset(
   std::shared_ptr<rclcpp::Node> & nh,

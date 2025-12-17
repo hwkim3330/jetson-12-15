@@ -33,7 +33,7 @@
 
 namespace jetsonai
 {
-namespace rssaem
+namespace robot
 {
 
 
@@ -133,6 +133,6 @@ private:
   std::mutex read_data_mutex_;
   std::mutex write_data_mutex_;
 };
-}  // namespace rssaem
+}  // namespace robot
 }  // namespace jetsonai
 #endif  // KETI_NODE__DYNAMIXEL_SDK_WRAPPER_HPP_

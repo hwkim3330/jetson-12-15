@@ -16,11 +16,11 @@
 #include <memory>
 #include <string>
 
-#include "rssaem_node/sensors/sensors.hpp"
+#include "robot_driver/sensors/sensors.hpp"
 
 namespace jetsonai
 {
-namespace rssaem
+namespace robot
 {
 namespace sensors
 {
@@ -39,6 +39,6 @@ private:
   rclcpp::Publisher<sensor_msgs::msg::BatteryState>::SharedPtr pub_;
 };
 }  // namespace sensors
-}  // namespace rssaem
+}  // namespace robot
 }  // namespace jetsonai
 #endif  // KETI_NODE__SENSORS__BATTERY_STATE_HPP_

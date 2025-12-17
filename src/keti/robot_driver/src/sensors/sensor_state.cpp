@@ -8,13 +8,13 @@
 //
 // Authors:Kate Kim
 
-#include "rssaem_node/sensors/sensor_state.hpp"
+#include "robot_driver/sensors/sensor_state.hpp"
 
 #include <memory>
 #include <string>
 #include <utility>
 
-using jetsonai::rssaem::sensors::SensorState;
+using jetsonai::robot::sensors::SensorState;
 
 SensorState::SensorState(
   std::shared_ptr<rclcpp::Node> & nh,
@@ -31,7 +31,7 @@ SensorState::SensorState(
   cliff_(cliff),
   sonar_(sonar)
 {
-  pub_ = nh->create_publisher<rssaem_msgs::msg::SensorState>(topic_name, this->qos_);
+  pub_ = nh->create_publisher<robot_msgs::msg::SensorState>(topic_name, this->qos_);
 
   RCLCPP_INFO(nh_->get_logger(), "Succeeded to create sensor state publisher");
 }
@@ -40,7 +40,7 @@ void SensorState::publish(
   const rclcpp::Time & now,
   std::shared_ptr<DynamixelSDKWrapper> & dxl_sdk_wrapper)
 {
-  auto msg = std::make_unique<rssaem_msgs::msg::SensorState>();
+  auto msg = std::make_unique<robot_msgs::msg::SensorState>();
 
   msg->header.stamp = now;
 

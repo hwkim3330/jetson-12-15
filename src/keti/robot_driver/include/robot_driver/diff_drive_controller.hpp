@@ -15,11 +15,11 @@
 
 #include <rclcpp/rclcpp.hpp>
 
-#include "rssaem_node/odometry.hpp"
+#include "robot_driver/odometry.hpp"
 
 namespace jetsonai
 {
-namespace rssaem
+namespace robot
 {
 class DiffDriveController : public rclcpp::Node
 {
@@ -31,6 +31,6 @@ private:
   std::shared_ptr<rclcpp::Node> nh_;
   std::unique_ptr<Odometry> odometry_;
 };
-}  // namespace rssaem
+}  // namespace robot
 }  // namespace jetsonai
 #endif  // KETI_NODE__DIFF_DRIVE_CONTROLLER_HPP_

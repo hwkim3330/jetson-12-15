@@ -17,11 +17,11 @@
 #include <sensor_msgs/msg/imu.hpp>
 #include <sensor_msgs/msg/magnetic_field.hpp>
 
-#include "rssaem_node/sensors/sensors.hpp"
+#include "robot_driver/sensors/sensors.hpp"
 
 namespace jetsonai
 {
-namespace rssaem
+namespace robot
 {
 namespace sensors
 {
@@ -45,6 +45,6 @@ private:
   std::string name_space_;
 };
 }  // namespace sensors
-}  // namespace rssaem
+}  // namespace robot
 }  // namespace jetsonai
 #endif  // KETI_NODE__SENSORS__IMU_HPP_

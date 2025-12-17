@@ -14,11 +14,11 @@
 #include <string>
 #include <utility>
 
-#include "rssaem_node/sensors/joint_state.hpp"
+#include "robot_driver/sensors/joint_state.hpp"
 
-using jetsonai::rssaem::sensors::JointState;
+using jetsonai::robot::sensors::JointState;
 
-static std::array<int32_t, jetsonai::rssaem::sensors::JOINT_NUM> last_diff_position,
+static std::array<int32_t, jetsonai::robot::sensors::JOINT_NUM> last_diff_position,
   last_position;
 
 JointState::JointState(

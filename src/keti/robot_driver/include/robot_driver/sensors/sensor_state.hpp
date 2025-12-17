@@ -11,16 +11,16 @@
 #ifndef KETI_NODE__SENSORS__SENSOR_STATE_HPP_
 #define KETI_NODE__SENSORS__SENSOR_STATE_HPP_
 
-#include <rssaem_msgs/msg/sensor_state.hpp>
+#include <robot_msgs/msg/sensor_state.hpp>
 
 #include <memory>
 #include <string>
 
-#include "rssaem_node/sensors/sensors.hpp"
+#include "robot_driver/sensors/sensors.hpp"
 
 namespace jetsonai
 {
-namespace rssaem
+namespace robot
 {
 namespace sensors
 {
@@ -41,7 +41,7 @@ public:
     std::shared_ptr<DynamixelSDKWrapper> & dxl_sdk_wrapper) override;
 
 private:
-  rclcpp::Publisher<rssaem_msgs::msg::SensorState>::SharedPtr pub_;
+  rclcpp::Publisher<robot_msgs::msg::SensorState>::SharedPtr pub_;
 
   uint8_t bumper_forward_;
   uint8_t bumper_backward_;
@@ -50,6 +50,6 @@ private:
   uint8_t sonar_;
 };
 }  // namespace sensors
-}  // namespace rssaem
+}  // namespace robot
 }  // namespace jetsonai
 #endif  // KETI_NODE__SENSORS__SENSOR_STATE_HPP_

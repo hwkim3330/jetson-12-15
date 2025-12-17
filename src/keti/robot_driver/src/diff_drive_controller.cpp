@@ -8,11 +8,11 @@
 //
 // Authors:Kate Kim
 
-#include "rssaem_node/diff_drive_controller.hpp"
+#include "robot_driver/diff_drive_controller.hpp"
 
 #include <memory>
 
-using jetsonai::rssaem::DiffDriveController;
+using jetsonai::robot::DiffDriveController;
 
 DiffDriveController::DiffDriveController(const float wheel_seperation, const float wheel_radius)
 : Node("diff_drive_controller", rclcpp::NodeOptions().use_intra_process_comms(true))

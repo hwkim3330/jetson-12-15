@@ -16,11 +16,11 @@
 
 #include <std_srvs/srv/set_bool.hpp>
 
-#include "rssaem_node/devices/devices.hpp"
+#include "robot_driver/devices/devices.hpp"
 
 namespace jetsonai
 {
-namespace rssaem
+namespace robot
 {
 namespace devices
 {
@@ -42,6 +42,6 @@ private:
   rclcpp::Service<std_srvs::srv::SetBool>::SharedPtr srv_;
 };
 }  // namespace devices
-}  // namespace rssaem
+}  // namespace robot
 }  // namespace jetsonai
 #endif  // KETI_NODE__DEVICES__MOTOR_POWER_HPP_

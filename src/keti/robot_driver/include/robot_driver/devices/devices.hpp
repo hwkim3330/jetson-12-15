@@ -17,13 +17,13 @@
 
 #include <rclcpp/rclcpp.hpp>
 
-#include "rssaem_node/control_table.hpp"
-#include "rssaem_node/dynamixel_sdk_wrapper.hpp"
+#include "robot_driver/control_table.hpp"
+#include "robot_driver/dynamixel_sdk_wrapper.hpp"
 
 
 namespace jetsonai
 {
-namespace rssaem
+namespace robot
 {
 extern const ControlTable extern_control_table;
 namespace devices
@@ -47,6 +47,6 @@ protected:
   rclcpp::QoS qos_ = rclcpp::QoS(rclcpp::ServicesQoS());
 };
 }  // namespace devices
-}  // namespace rssaem
+}  // namespace robot
 }  // namespace jetsonai
 #endif  // KETI_NODE__DEVICES__DEVICES_HPP_

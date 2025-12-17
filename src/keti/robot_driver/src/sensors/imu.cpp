@@ -8,13 +8,13 @@
 //
 // Authors:Kate Kim
 
-#include "rssaem_node/sensors/imu.hpp"
+#include "robot_driver/sensors/imu.hpp"
 
 #include <memory>
 #include <string>
 #include <utility>
 
-using jetsonai::rssaem::sensors::Imu;
+using jetsonai::robot::sensors::Imu;
 
 Imu::Imu(
   std::shared_ptr<rclcpp::Node> & nh,

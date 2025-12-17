@@ -16,11 +16,11 @@
 #include <memory>
 #include <string>
 
-#include "rssaem_node/sensors/sensors.hpp"
+#include "robot_driver/sensors/sensors.hpp"
 
 namespace jetsonai
 {
-namespace rssaem
+namespace robot
 {
 namespace sensors
 {
@@ -52,6 +52,6 @@ private:
   std::string wheel_right_joint_ = "wheel_right_joint";
 };
 }  // namespace sensors
-}  // namespace rssaem
+}  // namespace robot
 }  // namespace jetsonai
 #endif  // KETI_NODE__SENSORS__JOINT_STATE_HPP_

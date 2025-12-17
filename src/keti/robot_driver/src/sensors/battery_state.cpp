@@ -8,13 +8,13 @@
 //
 // Authors:Kate Kim
 
-#include "rssaem_node/sensors/battery_state.hpp"
+#include "robot_driver/sensors/battery_state.hpp"
 
 #include <memory>
 #include <string>
 #include <utility>
 
-using jetsonai::rssaem::sensors::BatteryState;
+using jetsonai::robot::sensors::BatteryState;
 
 BatteryState::BatteryState(
   std::shared_ptr<rclcpp::Node> & nh,

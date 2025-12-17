@@ -8,12 +8,12 @@
 //
 // Authors:Kate Kim
 
-#include "rssaem_node/dynamixel_sdk_wrapper.hpp"
+#include "robot_driver/dynamixel_sdk_wrapper.hpp"
 
 #include <algorithm>
 #include <string>
 
-using jetsonai::rssaem::DynamixelSDKWrapper;
+using jetsonai::robot::DynamixelSDKWrapper;
 
 DynamixelSDKWrapper::DynamixelSDKWrapper(const Device & device)
 : device_(device)

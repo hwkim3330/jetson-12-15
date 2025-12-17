@@ -8,12 +8,12 @@
 //
 // Authors:Kate Kim
 
-#include "rssaem_node/devices/sound.hpp"
+#include "robot_driver/devices/sound.hpp"
 
 #include <memory>
 #include <string>
 
-using jetsonai::rssaem::devices::Sound;
+using jetsonai::robot::devices::Sound;
 
 Sound::Sound(
   std::shared_ptr<rclcpp::Node> & nh,
@@ -22,11 +22,11 @@ Sound::Sound(
 : Devices(nh, dxl_sdk_wrapper)
 {
   RCLCPP_INFO(nh_->get_logger(), "Succeeded to create sound server");
-  srv_ = nh_->create_service<rssaem_msgs::srv::Sound>(
+  srv_ = nh_->create_service<robot_msgs::srv::Sound>(
     server_name,
     [this](
-      const std::shared_ptr<rssaem_msgs::srv::Sound::Request> request,
-      std::shared_ptr<rssaem_msgs::srv::Sound::Response> response) -> void
+      const std::shared_ptr<robot_msgs::srv::Sound::Request> request,
+      std::shared_ptr<robot_msgs::srv::Sound::Response> response) -> void
     {
       this->command(static_cast<void *>(request.get()), static_cast<void *>(response.get()));
     }
@@ -35,8 +35,8 @@ Sound::Sound(
 
 void Sound::command(const void * request, void * response)
 {
-  rssaem_msgs::srv::Sound::Request req = *(rssaem_msgs::srv::Sound::Request *)request;
-  rssaem_msgs::srv::Sound::Response * res = (rssaem_msgs::srv::Sound::Response *)response;
+  robot_msgs::srv::Sound::Request req = *(robot_msgs::srv::Sound::Request *)request;
+  robot_msgs::srv::Sound::Response * res = (robot_msgs::srv::Sound::Response *)response;
 
   res->success = dxl_sdk_wrapper_->set_data_to_device(
     extern_control_table.sound.addr,
@@ -46,9 +46,9 @@ void Sound::command(const void * request, void * response)
 }
 
 void Sound::request(
-  rclcpp::Client<rssaem_msgs::srv::Sound>::SharedPtr client,
-  rssaem_msgs::srv::Sound::Request req)
+  rclcpp::Client<robot_msgs::srv::Sound>::SharedPtr client,
+  robot_msgs::srv::Sound::Request req)
 {
-  auto request = std::make_shared<rssaem_msgs::srv::Sound::Request>(req);
+  auto request = std::make_shared<robot_msgs::srv::Sound::Request>(req);
   auto result = client->async_send_request(request);
 }
